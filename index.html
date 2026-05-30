@@ -1,0 +1,2935 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kelas Mengaji Hafsah - Portal</title>
+    
+    <!-- PWA / Home Screen App Icons & Meta Tags -->
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/TwZN5fP1/image.png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/TwZN5fP1/image.png">
+    <meta name="apple-mobile-web-app-title" content="KM Hafsah">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#052e16">
+    
+    <!-- Dynamic Manifest Generator for PWA -->
+    <script>
+        const manifestJSON = {
+            "name": "Kelas Mengaji Hafsah",
+            "short_name": "KM Hafsah",
+            "description": "Sistem Pemantauan Prestasi Pelajar",
+            "start_url": "./",
+            "display": "standalone",
+            "background_color": "#052e16",
+            "theme_color": "#052e16",
+            "icons": [
+                {
+                    "src": "https://i.postimg.cc/TwZN5fP1/image.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                },
+                {
+                    "src": "https://i.postimg.cc/TwZN5fP1/image.png",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                }
+            ]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestJSON)], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(manifestBlob);
+        document.write('<link rel="manifest" href="' + manifestURL + '">');
+    </script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- PapaParse for CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <!-- HTML2PDF & HTML2Canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Amiri', 'serif'],
+                    },
+                    colors: {
+                        quran: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                            950: '#052e16',
+                        },
+                        gold: {
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #15803d; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #166534; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; }
+
+        .modal-enter { opacity: 0; transform: scale(0.95); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: all 0.3s ease-out; }
+        
+        .islamic-pattern-bg {
+            background-color: #052e16;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2315803d' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* --- Gaya Khas Sidebar Minimize & Expand --- */
+        .admin-sidebar-slim { width: 5rem !important; }
+        .admin-sidebar-expanded { width: 16rem !important; }
+        
+        .admin-sidebar-slim .sidebar-text { display: none !important; }
+        .admin-sidebar-expanded .sidebar-text { display: block !important; }
+        
+        .admin-sidebar-slim .sidebar-logo-wrapper { width: 3rem !important; height: 3rem !important; }
+        .admin-sidebar-expanded .sidebar-logo-wrapper { width: 6rem !important; height: 6rem !important; }
+        
+        .admin-sidebar-slim .nav-button { justify-content: center !important; padding-left: 0 !important; padding-right: 0 !important; }
+        .admin-sidebar-expanded .nav-button { justify-content: flex-start !important; padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+        
+        .admin-sidebar-slim .nav-icon { margin-right: 0 !important; }
+        .admin-sidebar-expanded .nav-icon { margin-right: 0.75rem !important; }
+
+        /* --- Pengoptimuman Peranti Mudah Alih (Mobile-First CSS) --- */
+        input[type="text"], input[type="password"], input[type="file"], select, textarea {
+            font-size: 16px !important;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .mobile-nav-active {
+            background-color: #000 !important;
+            color: #fff !important;
+            border-top-color: #eab308 !important; 
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased h-screen w-screen overflow-hidden">
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center islamic-pattern-bg p-4 transition-opacity duration-300 overflow-y-auto">
+        <div class="bg-white p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md relative overflow-hidden my-auto">
+            
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gold-400 rounded-bl-full opacity-10 -mr-10 -mt-10"></div>
+            <div class="absolute bottom-0 left-0 w-32 h-32 bg-quran-600 rounded-tr-full opacity-10 -ml-10 -mb-10"></div>
+
+            <div id="student-login-form" class="relative z-10 transition-all duration-300">
+                <div class="flex flex-col items-center mb-8 text-center">
+                    <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-gold-500 overflow-hidden mb-4">
+                        <img src="https://i.postimg.cc/TwZN5fP1/image.png" alt="Logo" class="w-full h-full object-contain p-1">
+                    </div>
+                    <h2 class="text-2xl font-bold font-arabic text-gold-500 leading-tight">Kelas Mengaji<br>Hafsah</h2>
+                    <p class="text-xs text-quran-700 mt-2 font-medium bg-quran-50 px-3 py-1 rounded-full border border-quran-100">Portal Pelajar & Ibu Bapa</p>
+                </div>
+                
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5 text-center">No. Kad Pengenalan Pelajar</label>
+                        <div class="relative">
+                            <i data-lucide="credit-card" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                            <input type="text" id="login-ic" placeholder="Cth: 121212-10-1234" maxlength="14" class="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-0 focus:border-quran-500 transition-colors text-center text-lg tracking-[0.1em] font-bold text-gray-800 placeholder:font-normal placeholder:tracking-normal placeholder:text-gray-300">
+                        </div>
+                    </div>
+                    <button onclick="handleStudentLogin()" id="btn-login-student" class="w-full bg-quran-700 hover:bg-quran-800 text-white font-bold py-3.5 rounded-xl shadow-[0_4px_14px_0_rgba(21,128,61,0.39)] hover:shadow-[0_6px_20px_rgba(21,128,61,0.23)] hover:-translate-y-0.5 transition-all flex justify-center items-center">
+                        Semak Rekod
+                    </button>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+                    <button onclick="toggleAdminLogin()" class="text-xs font-medium text-gray-400 hover:text-quran-600 transition inline-flex items-center">
+                        <i data-lucide="shield" class="w-3.5 h-3.5 mr-1.5"></i> Log Masuk Pentadbir
+                    </button>
+                </div>
+            </div>
+
+            <div id="admin-login-form" class="relative z-10 hidden transition-all duration-300">
+                <div class="flex flex-col items-center mb-8 text-center">
+                    <div class="w-16 h-16 bg-quran-50 rounded-2xl flex items-center justify-center border border-quran-100 mb-4 text-quran-700">
+                        <i data-lucide="shield-check" class="w-8 h-8"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-800">Akses Guru / Pentadbir</h2>
+                    <p class="text-sm text-gray-500 mt-1">Sistem Pemantauan Prestasi</p>
+                </div>
+                
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Kata Laluan</label>
+                        <div class="relative">
+                            <i data-lucide="lock" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                            <input type="password" id="login-password" placeholder="••••••••" class="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-0 focus:border-gray-800 transition-colors text-lg font-medium text-gray-800">
+                        </div>
+                    </div>
+                    <button onclick="handleAdminLogin()" id="btn-login-admin" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3.5 rounded-xl shadow-lg hover:-translate-y-0.5 transition-all flex justify-center items-center">
+                        Log Masuk Sistem
+                    </button>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+                    <button onclick="toggleAdminLogin()" class="text-xs font-medium text-gray-500 hover:text-gray-800 transition inline-flex items-center">
+                        <i data-lucide="arrow-left" class="w-3.5 h-3.5 mr-1.5"></i> Kembali ke Portal Pelajar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Wrapper -->
+    <div id="app-wrapper" class="hidden h-full w-full flex">
+        
+        <!-- Sidebar (Admin Desktop) -->
+        <aside id="admin-sidebar" class="hidden islamic-pattern-bg text-white shadow-xl z-20 shrink-0 relative transition-[width] duration-300">
+            <button onclick="toggleSidebar()" class="hidden md:flex absolute -right-3.5 top-8 bg-gold-500 hover:bg-gold-600 text-white rounded-full p-1 shadow-lg border-2 border-white z-50 transition-transform">
+                <i data-lucide="chevron-right" id="sidebar-toggle-icon" class="w-4 h-4"></i>
+            </button>
+
+            <div class="p-6 flex flex-col items-center border-b border-quran-800 overflow-hidden">
+                <div class="sidebar-logo-wrapper w-12 h-12 transition-all duration-300 bg-white rounded-full flex items-center justify-center mb-4 shadow-lg border-2 border-gold-500 overflow-hidden shrink-0">
+                    <img src="https://i.postimg.cc/TwZN5fP1/image.png" alt="Logo Kelas Mengaji Hafsah" class="w-full h-full object-contain p-1.5">
+                </div>
+                <h1 class="sidebar-text text-xl font-bold text-center font-arabic leading-tight text-gold-400 whitespace-nowrap">Kelas Mengaji<br>Hafsah</h1>
+                <p class="sidebar-text text-xs text-quran-100 mt-2 uppercase tracking-wider whitespace-nowrap">Pemantauan Prestasi</p>
+            </div>
+            <nav class="flex-1 py-4 overflow-x-hidden">
+                <button onclick="switchTab('dashboard')" id="btn-dashboard" title="Dashboard Utama" class="nav-button w-full flex items-center text-sm font-medium bg-quran-800 border-l-4 border-gold-500 text-white transition-colors mt-1 py-3">
+                    <i data-lucide="layout-dashboard" class="nav-icon w-5 h-5 shrink-0"></i> 
+                    <span class="sidebar-text whitespace-nowrap">Dashboard Utama</span>
+                </button>
+                <button onclick="switchTab('students')" id="btn-students" title="Senarai Pelajar" class="nav-button w-full flex items-center text-sm font-medium text-quran-100 hover:bg-quran-800/50 hover:text-white border-l-4 border-transparent transition-colors mt-1 py-3">
+                    <i data-lucide="users" class="nav-icon w-5 h-5 shrink-0"></i> 
+                    <span class="sidebar-text whitespace-nowrap">Senarai Pelajar</span>
+                </button>
+                <button onclick="switchTab('settings')" id="btn-settings" title="Tetapan" class="nav-button w-full flex items-center text-sm font-medium text-quran-100 hover:bg-quran-800/50 hover:text-white border-l-4 border-transparent transition-colors mt-1 py-3">
+                    <i data-lucide="settings" class="nav-icon w-5 h-5 shrink-0"></i> 
+                    <span class="sidebar-text whitespace-nowrap">Tetapan</span>
+                </button>
+            </nav>
+            <div class="p-4 border-t border-quran-800 flex flex-col items-center overflow-x-hidden">
+                <button onclick="logout()" title="Log Keluar" class="nav-button w-full py-2.5 mb-3 bg-red-500/20 hover:bg-red-500/40 text-white rounded-lg text-xs font-medium transition flex items-center">
+                    <i data-lucide="log-out" class="nav-icon w-4 h-4 shrink-0"></i> 
+                    <span class="sidebar-text whitespace-nowrap">Log Keluar</span>
+                </button>
+                <div class="sidebar-text text-[10px] text-center text-quran-500 uppercase tracking-widest whitespace-nowrap">
+                    © KM Hafsah 2026
+                </div>
+            </div>
+        </aside>
+
+        <!-- Kawasan Kandungan Utama -->
+        <main class="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 relative">
+            
+            <header id="admin-mobile-header" class="hidden islamic-pattern-bg text-white p-3.5 justify-between items-center shadow-md z-20 shrink-0">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-gold-500 overflow-hidden shrink-0">
+                        <img src="https://i.postimg.cc/TwZN5fP1/image.png" alt="Logo" class="w-full h-full object-contain p-0.5">
+                    </div>
+                    <h1 class="font-bold font-arabic text-gold-400 leading-tight text-lg">Kelas Mengaji<br><span class="text-xs font-sans text-quran-100 uppercase tracking-wide">Hafsah</span></h1>
+                </div>
+                <div class="flex items-center">
+                    <button onclick="logout()" class="text-white hover:text-red-300 flex items-center text-sm font-medium px-2">
+                        <i data-lucide="log-out" class="w-5 h-5 mr-1.5"></i> Keluar
+                    </button>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-y-auto w-full relative scroll-smooth pb-24 md:pb-0" id="main-scroll-area">
+                
+                <div id="class-selector-container" class="hidden p-4 md:p-8 pb-0 flex-wrap bg-gray-50 z-10 sticky top-0 border-b border-gray-100 shadow-[0_2px_4px_rgba(0,0,0,0.02)]">
+                    <div class="flex overflow-x-auto hide-scrollbar bg-white p-1.5 rounded-xl border border-gray-200 shadow-sm w-full md:w-max items-center mb-4 md:mb-6">
+                        <button onclick="setClass('talaqqi')" id="btn-class-talaqqi" class="flex-none whitespace-nowrap px-5 py-2.5 rounded-lg bg-quran-700 text-white font-medium text-sm transition-all shadow-sm">
+                            <i data-lucide="book" class="w-4 h-4 inline-block mr-1 mb-0.5"></i> Talaqqi Al-Quran
+                        </button>
+                        <button onclick="setClass('abahata')" id="btn-class-abahata" class="flex-none whitespace-nowrap px-5 py-2.5 rounded-lg text-gray-500 hover:text-quran-700 font-medium text-sm transition-all">
+                            <i data-lucide="library" class="w-4 h-4 inline-block mr-1 mb-0.5"></i> Kelas ABAHATA
+                        </button>
+                    </div>
+                </div>
+
+                <div id="loading-state" class="hidden flex-col items-center justify-center py-20">
+                    <i data-lucide="loader-2" class="w-12 h-12 text-quran-600 animate-spin mb-4"></i>
+                    <p class="text-quran-800 font-medium animate-pulse">Menarik data daripada Google Sheets...</p>
+                </div>
+
+                <div id="error-state" class="hidden flex-col items-center justify-center py-20 text-center">
+                    <i data-lucide="alert-triangle" class="w-16 h-16 text-red-500 mb-4"></i>
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">Ralat Mengambil Data</h2>
+                    <p class="text-gray-600 mb-4" id="error-msg">Sila pastikan sambungan internet anda stabil.</p>
+                    <button onclick="fetchData(true)" class="px-6 py-2.5 bg-quran-700 text-white rounded-lg shadow hover:bg-quran-800 transition font-medium">Cuba Semula</button>
+                </div>
+
+                <!-- TAB DASHBOARD ADMIN -->
+                <div id="tab-dashboard" class="hidden space-y-6 p-4 md:p-8 pt-4">
+                    <div class="flex flex-col md:flex-row justify-between md:items-end gap-4 mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">Analisis <span id="display-class-title" class="text-quran-700">Talaqqi Al-Quran</span></h2>
+                            <p class="text-sm text-gray-500 mt-1">Prestasi purata kelas berdasarkan pecahan tajwid dan kefasihan.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 no-print w-full md:w-auto">
+                            <!-- Butang Muat Turun -->
+                            <button onclick="downloadDashboardPDF(this)" class="flex-1 md:flex-none flex items-center justify-center text-sm bg-blue-600 border border-blue-600 shadow-sm px-4 py-2.5 rounded-lg text-white hover:bg-blue-700 transition font-medium">
+                                <i data-lucide="file-text" class="w-4 h-4 mr-2"></i> PDF
+                            </button>
+                            <button onclick="downloadDashboardImage(this)" class="flex-1 md:flex-none flex items-center justify-center text-sm bg-quran-700 border border-quran-700 shadow-sm px-4 py-2.5 rounded-lg text-white hover:bg-quran-800 transition font-medium">
+                                <i data-lucide="image-down" class="w-4 h-4 mr-2"></i> Gambar
+                            </button>
+                            <button onclick="fetchData(true)" class="flex-1 md:flex-none flex items-center justify-center text-sm bg-white border border-gray-200 shadow-sm px-4 py-2.5 rounded-lg text-gray-600 hover:text-quran-700 transition font-medium">
+                                <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i> Segar Semula
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center">
+                            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mr-4 shrink-0">
+                                <i data-lucide="users" class="w-6 h-6"></i>
+                            </div>
+                            <div class="overflow-hidden">
+                                <p class="text-sm text-gray-500 font-medium">Jumlah Pelajar</p>
+                                <h3 class="text-2xl font-bold text-gray-800" id="stat-total-students">0</h3>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center">
+                            <div class="w-12 h-12 rounded-full bg-quran-50 text-quran-600 flex items-center justify-center mr-4 shrink-0">
+                                <i data-lucide="activity" class="w-6 h-6"></i>
+                            </div>
+                            <div class="overflow-hidden">
+                                <p class="text-sm text-gray-500 font-medium">Purata Kelas (%)</p>
+                                <h3 class="text-2xl font-bold text-gray-800" id="stat-avg-class">0%</h3>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center">
+                            <div class="w-12 h-12 rounded-full bg-gold-50 text-gold-600 flex items-center justify-center mr-4 shrink-0">
+                                <i data-lucide="award" class="w-6 h-6"></i>
+                            </div>
+                            <div class="overflow-hidden">
+                                <p class="text-sm text-gray-500 font-medium">Penguasaan Terbaik</p>
+                                <h3 class="text-sm font-bold text-gray-800 truncate w-full" id="stat-best-category" title="-">-</h3>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center">
+                            <div class="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mr-4 shrink-0">
+                                <i data-lucide="trending-down" class="w-6 h-6"></i>
+                            </div>
+                            <div class="overflow-hidden">
+                                <p class="text-sm text-gray-500 font-medium">Perlu Penekanan</p>
+                                <h3 class="text-sm font-bold text-gray-800 truncate w-full" id="stat-worst-category" title="-">-</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Profil Prestasi Kelas</h3>
+                            <p class="text-xs text-gray-500 mb-4">Purata keseluruhan mengikut bahagian utama.</p>
+                            <div class="relative flex-1 min-h-[300px] w-full flex justify-center">
+                                <canvas id="sectionChart"></canvas>
+                            </div>
+                            <div id="dashboard-radar-legend" class="mt-4 flex flex-wrap justify-center gap-4 text-[11px] font-medium text-gray-600"></div>
+                        </div>
+                        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
+                            <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 border-b border-gray-100 pb-2 gap-2">
+                                <h3 class="text-lg font-bold text-gray-800">Carta Purata Terperinci</h3>
+                                <select id="chart-section-filter" onchange="updateMainChart()" class="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-1 focus:ring-quran-500 w-full sm:w-auto">
+                                    <option value="ALL">Semua Bahagian</option>
+                                </select>
+                            </div>
+                            <div class="relative flex-1 min-h-[300px] w-full">
+                                <canvas id="mainChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-6">
+                        <div class="px-5 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+                            <h4 class="font-bold text-gray-800 text-sm flex items-center">
+                                <i data-lucide="star" class="w-4 h-4 mr-2 text-gold-500"></i> Topik Cemerlang & Baik (Prestasi Kelas Tertinggi)
+                            </h4>
+                        </div>
+                        <div class="p-5">
+                            <div id="excellence-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB STUDENT LIST ADMIN -->
+                <div id="tab-students" class="hidden space-y-6 p-4 md:p-8 pt-4">
+                    <div class="flex flex-col md:flex-row justify-between md:items-end gap-4 mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">Senarai Pelajar</h2>
+                            <p class="text-sm text-gray-500 mt-1">Klik pada nama pelajar untuk melihat laporan dan suntingan.</p>
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                            <div class="relative w-full md:w-64">
+                                <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                                <input type="text" id="search-input" onkeyup="filterStudents()" placeholder="Cari nama atau IC..." class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-quran-500 focus:border-transparent text-sm">
+                            </div>
+                            <!-- Butang Muat Turun Kelas Excel Baru -->
+                            <button onclick="downloadAllStudentsExcel(this)" class="w-full md:w-auto px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition flex items-center justify-center whitespace-nowrap shadow-sm">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-2"></i> Eksport Excel
+                            </button>
+                            <button onclick="toggleSortOrder()" class="w-full md:w-auto px-4 py-2.5 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg text-sm font-medium transition flex items-center justify-center whitespace-nowrap shadow-sm">
+                                <i data-lucide="arrow-down" id="sort-icon" class="w-4 h-4 mr-2"></i> <span id="sort-text">Markah Tertinggi</span>
+                            </button>
+                            <button onclick="toggleAddStudentModal()" class="w-full md:w-auto px-4 py-2.5 bg-quran-700 hover:bg-quran-800 text-white rounded-lg text-sm font-medium transition flex items-center justify-center whitespace-nowrap shadow-sm">
+                                <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i> Tambah Pelajar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="overflow-x-auto hide-scrollbar">
+                            <table class="w-full whitespace-nowrap">
+                                <thead class="bg-gray-50 border-b border-gray-100 text-left">
+                                    <tr>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Bil</th>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama Pelajar</th>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">IC / Pengenalan</th>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Skor Purata</th>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Tindakan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="student-table-body" class="divide-y divide-gray-100">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="no-student-msg" class="hidden p-8 text-center text-gray-500">
+                            Tiada pelajar dijumpai.
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-settings" class="hidden space-y-6 p-4 md:p-8 pt-4">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Tetapan Sistem</h2>
+                    
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 max-w-lg">
+                        <h3 class="text-lg font-bold text-gray-800 mb-1 flex items-center">
+                            <i data-lucide="key-round" class="w-5 h-5 mr-2 text-quran-600"></i> Tukar Kata Laluan Admin
+                        </h3>
+                        <p class="text-xs text-gray-500 mb-6">Kemaskini ini akan terus disimpan ke dalam pangkalan data (Google Sheets).</p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Kata Laluan Lama</label>
+                                <input type="password" id="setting-old-pwd" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-quran-500 focus:border-transparent text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Kata Laluan Baru</label>
+                                <input type="password" id="setting-new-pwd" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-quran-500 focus:border-transparent text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Sahkan Kata Laluan Baru</label>
+                                <input type="password" id="setting-confirm-pwd" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-quran-500 focus:border-transparent text-sm">
+                            </div>
+                            
+                            <div class="pt-4 mt-2 border-t border-gray-100 flex justify-end">
+                                <button onclick="updateAdminPassword()" id="btn-save-pwd" class="px-6 py-2.5 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium shadow-sm transition flex justify-center items-center text-sm w-full md:w-auto">
+                                    Simpan Kata Laluan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB STUDENT PORTAL -->
+                <div id="tab-student-portal" class="hidden w-full max-w-5xl mx-auto md:py-6 space-y-6 pb-12 relative">
+                    <div class="bg-white rounded-none md:rounded-2xl shadow-sm border-b md:border border-gray-100 overflow-hidden relative">
+                        <div class="h-28 md:h-40 islamic-pattern-bg"></div>
+                        
+                        <div class="absolute top-4 right-4 flex gap-2 z-10 no-print flex-wrap justify-end">
+                            <!-- Butang Excel Baru -->
+                            <button onclick="downloadPortalExcel(this)" class="bg-green-600/90 hover:bg-green-600 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center transition border border-green-500/50 shadow-sm">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4 md:mr-2"></i> <span class="hidden md:inline">Excel</span>
+                            </button>
+                            <!-- Butang Muat Turun -->
+                            <button onclick="downloadPortalPDF(this)" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center transition border border-white/30 shadow-sm">
+                                <i data-lucide="file-text" class="w-4 h-4 md:mr-2"></i> <span class="hidden md:inline">PDF</span>
+                            </button>
+                            <button onclick="downloadPortalImage(this)" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center transition border border-white/30 shadow-sm">
+                                <i data-lucide="image-down" class="w-4 h-4 md:mr-2"></i> <span class="hidden md:inline">Gambar</span>
+                            </button>
+                            <button onclick="logout()" class="bg-red-500/80 hover:bg-red-500 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center transition border border-red-500/50 shadow-sm">
+                                <i data-lucide="log-out" class="w-4 h-4 md:mr-2"></i> <span class="hidden md:inline">Keluar</span>
+                            </button>
+                        </div>
+                        
+                        <div class="px-6 md:px-10 pb-6 md:pb-8 relative">
+                            <div class="flex flex-col md:flex-row md:items-end mb-4">
+                                <div class="flex flex-col md:flex-row md:items-end w-full">
+                                    <div class="relative group inline-block mx-auto md:mx-0 -mt-14 md:-mt-20"> 
+                                        <img id="portal-student-pic" src="" alt="Profile" class="w-28 h-28 md:w-40 md:h-40 rounded-full border-4 border-white object-cover bg-white shadow-xl">
+                                        <button onclick="togglePortalEdit()" class="no-print absolute bottom-1 right-1 md:bottom-2 md:right-2 bg-gold-500 hover:bg-gold-600 text-white p-3 rounded-full shadow-lg transition transform hover:scale-105 border-2 border-white focus:outline-none">
+                                            <i data-lucide="camera" class="w-4 h-4 md:w-5 md:h-5"></i>
+                                        </button>
+                                    </div>
+                                    <div class="mt-4 md:mt-0 md:ml-6 pb-2 text-center md:text-left overflow-hidden">
+                                        <h2 class="text-2xl md:text-4xl font-bold font-arabic text-gray-800 leading-tight" id="portal-student-name">Nama Pelajar</h2>
+                                        <p class="text-sm md:text-base text-gray-500 font-medium flex items-center justify-center md:justify-start mt-1 md:mt-2">
+                                            <i data-lucide="credit-card" class="w-4 h-4 mr-1.5"></i> <span id="portal-student-ic">No IC</span>
+                                        </p>
+                                        <span class="inline-block mt-3 px-4 py-1.5 bg-quran-50 text-quran-700 text-xs md:text-sm font-bold rounded-full border border-quran-100" id="portal-student-class">Kelas</span>
+                                        <div id="portal-class-selector" class="mt-3 flex flex-nowrap overflow-x-auto hide-scrollbar gap-2 justify-start md:justify-start hidden no-print pb-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="portal-edit-section" class="hidden bg-gray-50 p-5 rounded-xl border border-gray-200 mt-6 md:mx-0 -mx-2 no-print">
+                                <h3 class="font-bold text-gray-800 mb-3 flex items-center text-sm"><i data-lucide="image" class="w-4 h-4 mr-2 text-quran-600"></i> Muat Naik Gambar Profil Baharu</h3>
+                                <div class="flex flex-col sm:flex-row items-end gap-3 sm:gap-4">
+                                    <div class="flex-1 w-full">
+                                        <input type="file" id="portal-edit-image" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-quran-50 file:text-quran-700 hover:file:bg-quran-100 transition bg-white">
+                                    </div>
+                                    <div class="flex w-full sm:w-auto gap-2">
+                                        <button onclick="togglePortalEdit()" class="flex-1 sm:flex-none px-4 py-2.5 bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 rounded-lg text-sm font-medium transition text-center">Batal</button>
+                                        <button onclick="savePortalPicture()" id="portal-btn-save" class="flex-1 sm:flex-none px-6 py-2.5 bg-quran-700 hover:bg-quran-800 text-white rounded-lg text-sm font-medium transition shadow-sm whitespace-nowrap flex justify-center items-center">Simpan Gambar</button>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] md:text-xs text-gray-400 mt-3 italic">* Perubahan gambar mungkin mengambil masa beberapa saat untuk dipaparkan sepenuhnya kerana tetapan keselamatan pelayan (server cache).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-4 md:px-0 space-y-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                                <h3 class="font-bold text-gray-800 mb-4 flex items-center text-lg">
+                                    <i data-lucide="radar" class="w-5 h-5 mr-2 text-quran-600"></i> Profil Kompetensi
+                                </h3>
+                                <div class="relative h-[300px] md:h-[400px] w-full flex justify-center">
+                                    <canvas id="portalRadarChart"></canvas>
+                                </div>
+                                <div id="portal-radar-legend" class="mt-4 flex flex-wrap justify-center gap-4 text-[11px] font-medium text-gray-600"></div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center flex flex-col justify-center min-h-[160px]">
+                                    <p class="text-sm text-gray-500 font-medium mb-1">Markah Keseluruhan</p>
+                                    <div class="text-5xl md:text-6xl font-bold tracking-tight" id="portal-overall-score">0%</div>
+                                    <div id="portal-overall-grade" class="text-base md:text-lg font-bold tracking-widest mt-2 uppercase"></div>
+                                    <div id="portal-target-badge" class="mt-4 w-full"></div>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                                    <h4 class="font-bold text-gray-800 mb-2 flex items-center text-sm border-b border-gray-50 pb-2">
+                                        <i data-lucide="award" class="w-4 h-4 mr-2 text-emerald-500"></i> Cemerlang (≥ 90%)
+                                    </h4>
+                                    <ul id="portal-cemerlang" class="space-y-1.5 text-sm text-gray-600 overflow-y-auto custom-scrollbar" style="max-height: 100px;"></ul>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                                    <h4 class="font-bold text-gray-800 mb-2 flex items-center text-sm border-b border-gray-50 pb-2">
+                                        <i data-lucide="check-circle-2" class="w-4 h-4 mr-2 text-green-500"></i> Baik (70 - 89%)
+                                    </h4>
+                                    <ul id="portal-baik" class="space-y-1.5 text-sm text-gray-600 overflow-y-auto custom-scrollbar" style="max-height: 100px;"></ul>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                                    <h4 class="font-bold text-gray-800 mb-2 flex items-center text-sm border-b border-gray-50 pb-2">
+                                        <i data-lucide="alert-triangle" class="w-4 h-4 mr-2 text-orange-500"></i> Sederhana (41 - 69%)
+                                    </h4>
+                                    <ul id="portal-sederhana" class="space-y-1.5 text-sm text-gray-600 overflow-y-auto custom-scrollbar" style="max-height: 100px;"></ul>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                                    <h4 class="font-bold text-gray-800 mb-2 flex items-center text-sm border-b border-gray-50 pb-2">
+                                        <i data-lucide="alert-circle" class="w-4 h-4 mr-2 text-red-500"></i> Lemah (≤ 40%)
+                                    </h4>
+                                    <ul id="portal-lemah" class="space-y-1.5 text-sm text-gray-600 overflow-y-auto custom-scrollbar" style="max-height: 100px;"></ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="portal-table-container" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="px-5 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+                                <h4 class="font-bold text-gray-800 text-sm">Pecahan Markah Terperinci</h4>
+                                <span class="text-xs font-medium text-gray-400">Rujukan Silibus Lengkap</span>
+                            </div>
+                            <div class="overflow-x-auto hide-scrollbar">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="bg-gray-50 text-gray-500">
+                                        <tr>
+                                            <th class="px-5 py-4 font-medium border-b border-gray-200">Aspek Penilaian</th>
+                                            <th class="px-5 py-4 font-medium text-center border-b border-gray-200">Markah Diperolehi</th>
+                                            <th class="px-5 py-4 font-medium text-center border-b border-gray-200">Markah Penuh</th>
+                                            <th class="px-5 py-4 font-medium text-center border-b border-gray-200">Peratusan (%)</th>
+                                            <th class="px-5 py-4 font-medium text-center border-b border-gray-200">Pencapaian</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="portal-detail-table" class="divide-y divide-gray-100">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center pb-8 pt-4">
+                            <p class="text-xs text-gray-400">© Kelas Mengaji Hafsah 2026. Hak Cipta Terpelihara.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <nav id="admin-bottom-nav" class="hidden md:hidden fixed bottom-0 left-0 w-full bg-gray-900 text-gray-400 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.3)] justify-around items-center">
+                <button onclick="switchTab('dashboard')" id="btn-mobile-dashboard" class="mobile-nav-btn flex-1 flex flex-col items-center py-2.5 border-t-4 border-transparent hover:text-white transition-all">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mb-1"></i>
+                    <span class="text-[10px] font-bold tracking-wider">UTAMA</span>
+                </button>
+                <button onclick="switchTab('students')" id="btn-mobile-students" class="mobile-nav-btn flex-1 flex flex-col items-center py-2.5 border-t-4 border-transparent hover:text-white transition-all">
+                    <i data-lucide="users" class="w-5 h-5 mb-1"></i>
+                    <span class="text-[10px] font-bold tracking-wider">PELAJAR</span>
+                </button>
+                <button onclick="switchTab('settings')" id="btn-mobile-settings" class="mobile-nav-btn flex-1 flex flex-col items-center py-2.5 border-t-4 border-transparent hover:text-white transition-all">
+                    <i data-lucide="settings" class="w-5 h-5 mb-1"></i>
+                    <span class="text-[10px] font-bold tracking-wider">TETAPAN</span>
+                </button>
+            </nav>
+            
+        </main>
+    </div>
+
+    <!-- MODAL ADMIN STUDENT -->
+    <div id="student-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
+        <div id="admin-modal-content" class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col transform transition-all relative">
+            
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center islamic-pattern-bg text-white">
+                <div class="flex items-center">
+                    <img id="modal-student-pic" src="" alt="Profile" class="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-gold-400 object-cover mr-4 bg-white/20 shadow-sm">
+                    <div>
+                        <h3 class="text-lg md:text-xl font-bold font-arabic text-gold-400" id="modal-student-name">Nama</h3>
+                        <p class="text-xs md:text-sm text-quran-100 mt-1 flex items-center">
+                            <i data-lucide="credit-card" class="w-3 h-3 md:w-4 md:h-4 mr-1"></i> <span id="modal-student-ic">IC Number</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="flex space-x-2 items-center self-start no-print flex-wrap justify-end">
+                    <!-- Butang Excel Baru -->
+                    <button onclick="downloadAdminStudentExcel(this)" class="text-white hover:text-gold-300 transition bg-white/10 px-3 py-1.5 rounded-lg flex items-center text-xs md:text-sm font-medium">
+                        <i data-lucide="file-spreadsheet" class="w-3 h-3 md:w-4 md:h-4 md:mr-1.5"></i> <span class="hidden md:inline">Excel</span>
+                    </button>
+                    <!-- Butang PDF -->
+                    <button onclick="downloadAdminStudentPDF(this)" id="btn-dl-admin-student" class="text-white hover:text-gold-300 transition bg-white/10 px-3 py-1.5 rounded-lg flex items-center text-xs md:text-sm font-medium">
+                        <i data-lucide="file-text" class="w-3 h-3 md:w-4 md:h-4 md:mr-1.5"></i> <span class="hidden md:inline">PDF</span>
+                    </button>
+                    <!-- Butang Gambar -->
+                    <button onclick="downloadAdminStudentImage(this)" class="text-white hover:text-gold-300 transition bg-white/10 px-3 py-1.5 rounded-lg flex items-center text-xs md:text-sm font-medium">
+                        <i data-lucide="image-down" class="w-3 h-3 md:w-4 md:h-4 md:mr-1.5"></i> <span class="hidden md:inline">Gambar</span>
+                    </button>
+                    <button onclick="toggleEditMode()" id="btn-edit-mode" class="text-white hover:text-gold-300 transition bg-white/10 px-3 py-1.5 rounded-lg flex items-center text-xs md:text-sm font-medium">
+                        <i data-lucide="edit" class="w-3 h-3 md:w-4 md:h-4 mr-1.5"></i> Edit
+                    </button>
+                    <button onclick="closeModal()" class="text-white hover:text-red-300 transition bg-white/10 p-2 rounded-full">
+                        <i data-lucide="x" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="admin-modal-scroll-area" class="p-4 md:p-6 overflow-y-auto flex-1 bg-gray-50 relative custom-scrollbar">
+                
+                <div id="modal-read-view" class="block">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+                            <h4 class="font-bold text-gray-800 mb-4 flex items-center">
+                                <i data-lucide="radar" class="w-5 h-5 mr-2 text-quran-600"></i> Profil Bacaan (%)
+                            </h4>
+                            <div class="relative h-[300px] md:h-[350px] w-full flex justify-center">
+                                <canvas id="radarChart"></canvas>
+                            </div>
+                            <!-- Legend Rujukan Carta Admin Modal -->
+                            <div id="admin-radar-legend" class="mt-4 flex flex-wrap justify-center gap-4 text-[11px] font-medium text-gray-600"></div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm text-center flex flex-col justify-center">
+                                <p class="text-sm text-gray-500 mb-1">Skor Keseluruhan</p>
+                                <div class="text-4xl font-bold" id="modal-overall-score">0%</div>
+                                <div id="modal-overall-grade" class="text-sm font-bold tracking-widest mt-1 uppercase"></div>
+                                <div id="modal-target-badge" class="mt-3 w-full"></div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                                <h4 class="font-bold text-gray-800 mb-2 flex items-center text-sm border-b border-gray-50 pb-2">
+                                    <i data-lucide="award" class="w-4 h-4 mr-2 text-emerald-500"></i> Cemerlang (≥ 90%)
+                                </h4>
+                                <ul id="modal-cemerlang" class="space-y-1.5 text-sm text-gray-600 overflow-y-auto custom-scrollbar" style="max-height: 100px;"></ul>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                                <h4 class="font-bold text-gray-800 mb-2 flex items-center text-sm border-b border-gray-50 pb-2">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 mr-2 text-green-500"></i> Baik (70 - 89%)
+                                </h4>
+                                <ul id="modal-baik" class="space-y-1.5 text-sm text-gray-600 overflow-y-auto custom-scrollbar" style="max-height: 100px;"></ul>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                                <h4 class="font-bold text-gray-800 mb-2 flex items-center text-sm border-b border-gray-50 pb-2">
+                                    <i data-lucide="alert-triangle" class="w-4 h-4 mr-2 text-orange-500"></i> Sederhana (41 - 69%)
+                                </h4>
+                                <ul id="modal-sederhana" class="space-y-1.5 text-sm text-gray-600 overflow-y-auto custom-scrollbar" style="max-height: 100px;"></ul>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                                <h4 class="font-bold text-gray-800 mb-2 flex items-center text-sm border-b border-gray-50 pb-2">
+                                    <i data-lucide="alert-circle" class="w-4 h-4 mr-2 text-red-500"></i> Lemah (≤ 40%)
+                                </h4>
+                                <ul id="modal-lemah" class="space-y-1.5 text-sm text-gray-600 overflow-y-auto custom-scrollbar" style="max-height: 100px;"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="admin-table-container" class="mt-6 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="px-5 py-3 border-b border-gray-100 bg-gray-50">
+                            <h4 class="font-bold text-gray-800 text-sm">Pecahan Markah Terperinci</h4>
+                        </div>
+                        <div class="overflow-x-auto hide-scrollbar">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-gray-500">
+                                    <tr>
+                                        <th class="px-5 py-3 font-medium">Aspek Penilaian</th>
+                                        <th class="px-5 py-3 font-medium text-center">Markah Pelajar</th>
+                                        <th class="px-5 py-3 font-medium text-center">Markah Penuh</th>
+                                        <th class="px-5 py-3 font-medium text-center">Peratusan (%)</th>
+                                        <th class="px-5 py-3 font-medium text-center">Pencapaian</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modal-detail-table" class="divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modal-edit-view" class="hidden">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6">
+                        <h4 class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center text-sm md:text-base">
+                            <i data-lucide="user-cog" class="w-4 h-4 md:w-5 md:h-5 mr-2 text-quran-600"></i> Kemaskini Maklumat Pelajar
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Pelajar</label>
+                                <input type="text" id="edit-name" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-quran-500 focus:border-transparent text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Muat Naik Gambar Baru (Abaikan jika tiada)</label>
+                                <input type="file" id="edit-image" accept="image/*" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-quran-50 file:text-quran-700 hover:file:bg-quran-100 bg-white">
+                            </div>
+                        </div>
+
+                        <h4 class="font-bold text-gray-800 border-b pb-3 mb-4 mt-6 md:mt-8 flex items-center text-sm md:text-base">
+                            <i data-lucide="file-check-2" class="w-4 h-4 md:w-5 md:h-5 mr-2 text-quran-600"></i> Kemaskini Markah Bacaan
+                        </h4>
+                        
+                        <div id="edit-marks-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                            </div>
+
+                        <div class="mt-8 flex flex-col sm:flex-row justify-between gap-3 pt-4 border-t border-gray-100">
+                            <button onclick="confirmDeleteStudent()" class="px-5 py-2.5 text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 rounded-lg font-medium transition text-sm flex items-center justify-center">
+                                <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i> Padam Pelajar
+                            </button>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button onclick="toggleEditMode()" class="px-5 py-2.5 text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg font-medium transition text-sm">Batal</button>
+                                <button onclick="saveStudentData()" id="btn-save" class="px-6 py-2.5 bg-quran-700 hover:bg-quran-800 text-white rounded-lg font-medium shadow-sm transition flex justify-center items-center text-sm">
+                                    <i data-lucide="save" class="w-4 h-4 mr-2"></i> Simpan Perubahan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Pelajar -->
+    <div id="add-student-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col transform transition-all">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center islamic-pattern-bg text-white">
+                <h3 class="text-lg font-bold font-arabic text-gold-400 flex items-center">
+                    <i data-lucide="user-plus" class="w-5 h-5 mr-2"></i> Tambah Pelajar Baharu
+                </h3>
+                <button onclick="toggleAddStudentModal()" class="text-white hover:text-red-300 transition bg-white/10 p-2 rounded-full">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[80vh] custom-scrollbar">
+                
+                <div class="space-y-5" id="add-student-step-1">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Kelas <span class="text-red-500">*</span></label>
+                        <select id="add-student-class" onchange="resetAddStudentForm()" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-quran-500 focus:border-transparent text-sm font-medium">
+                            <option value="TALAQQI AL QURAN">Talaqqi Al-Quran</option>
+                            <option value="KELAS ABAHATA">Kelas ABAHATA</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">No. Kad Pengenalan (IC) <span class="text-red-500">*</span></label>
+                        <div class="flex gap-2">
+                            <input type="text" id="add-student-ic" oninput="resetAddStudentForm()" placeholder="Cth: 121212-10-1234" maxlength="14" class="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-quran-500 focus:border-transparent text-sm tracking-wide">
+                            <button onclick="checkStudentIC()" id="btn-check-ic" class="px-5 py-2.5 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium transition text-sm flex items-center shadow-sm">
+                                Semak
+                            </button>
+                        </div>
+                        <div id="ic-check-msg" class="hidden mt-2"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-5 mt-5 hidden" id="add-student-step-2">
+                    <div class="border-t border-gray-100 pt-5">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Penuh Pelajar <span class="text-red-500">*</span></label>
+                        <input type="text" id="add-student-name" placeholder="Cth: Ahmad bin Abu" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-quran-500 focus:border-transparent text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Gambar Profil (Pilihan)</label>
+                        <input type="file" id="add-student-image" accept="image/*" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-quran-50 file:text-quran-700 hover:file:bg-quran-100 bg-white">
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100 hidden" id="add-student-footer">
+                    <button onclick="toggleAddStudentModal()" class="px-5 py-2.5 text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg font-medium transition text-sm">Batal</button>
+                    <button onclick="submitNewStudent()" id="btn-add-student-save" class="px-6 py-2.5 bg-quran-700 hover:bg-quran-800 text-white rounded-lg font-medium shadow-sm transition flex justify-center items-center text-sm">
+                        <i data-lucide="save" class="w-4 h-4 mr-2"></i> Simpan Pelajar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Padam Pelajar -->
+    <div id="delete-confirm-modal" class="fixed inset-0 z-[80] hidden items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col transform transition-all p-6 text-center">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Pasti untuk hapus?</h3>
+            <p class="text-sm text-gray-500 mb-6">Tindakan ini akan memadamkan data pelajar ini secara <b>kekal</b> dari pangkalan data Google Sheet.</p>
+            <div class="flex gap-3 justify-center">
+                <button onclick="hideDeleteConfirm()" class="px-5 py-2.5 text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg font-medium transition text-sm">Batal</button>
+                <button onclick="proceedDeleteStudent()" id="btn-confirm-delete" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium shadow-sm transition flex items-center text-sm">
+                    Hapus Pelajar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRlTI-6vYIoxYlNjMKG_kES9vJnwB_pBEGUZkrWj5jPiq2tdZfY4_RGFJoj1tqBhz6/exec'; 
+        const SPREADSHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDUxXg3B_ynNXzH2MpH0Utl45m2YUHABkKAPrPDmvD3s5fFeTwV6ruIttOLAUwZyuzpOoEEmAMDKIv/pub';
+        const CLASSES = {
+            talaqqi: { id: 'talaqqi', name: 'Talaqqi Al-Quran', url: SPREADSHEET_BASE + '?output=csv' },
+            abahata: { id: 'abahata', name: 'Kelas ABAHATA', url: SPREADSHEET_BASE + '?gid=883851067&output=csv' }
+        };
+        const PASSWORD_CSV_URL = SPREADSHEET_BASE + '?gid=1794402337&single=true&output=csv';
+        let currentAdminPassword = ''; 
+
+        let currentClassId = 'talaqqi';
+        let classCache = {}; 
+        let globalData = { headers: [], baseMarks: {}, students: [], classAverages: {}, classSectionAverages: {}, stats: {}, sectionsList: [] };
+        let currentLoggedInStudent = null;
+        let currentLoggedInClass = null;
+        let studentEnrolledClasses = [];
+        let mainChartInstance = null;
+        let radarChartInstance = null;
+        let sectionChartInstance = null;
+        let portalRadarChartInstance = null;
+        let currentEditingStudent = null; 
+        let isSidebarExpanded = false; 
+        let currentSortOrder = 'desc'; 
+
+        function generateAvatar(name) {
+            let initials = (name || '?').trim().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            if(!initials) initials = '?';
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><rect width="100" height="100" fill="#15803d"/><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="45" font-weight="bold">${initials}</text></svg>`;
+            return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+        }
+
+        function toggleSidebar() {
+            isSidebarExpanded = !isSidebarExpanded;
+            const sidebar = document.getElementById('admin-sidebar');
+            const icon = document.getElementById('sidebar-toggle-icon');
+            if (isSidebarExpanded) {
+                sidebar.classList.remove('admin-sidebar-slim');
+                sidebar.classList.add('admin-sidebar-expanded');
+                icon.setAttribute('data-lucide', 'chevron-left');
+            } else {
+                sidebar.classList.remove('admin-sidebar-expanded');
+                sidebar.classList.add('admin-sidebar-slim');
+                icon.setAttribute('data-lucide', 'chevron-right');
+            }
+            lucide.createIcons();
+        }
+
+        function getSection(header, classId) {
+            header = header.toUpperCase().trim();
+            if (classId === 'talaqqi') {
+                if (header === 'SEBUTAN MAKHRAJ') return 'SEBUTAN';
+                if (['QALQALAH', 'HURUF BERSABDU', 'MIM & NUN BERSABDU', 'CARA WAQAF', 'TANDA WAQAF', 'ALIF LAM QAMARIAH', 'ALIF LAM SYAMSIAH', 'BACAAN LAIN'].includes(header)) return 'CARA BACAAN';
+                if (['MAD ASLI', 'IDZHAR', 'IDGHAM', 'IKLAB', "IKHFA' HAQIQI", 'IDGHAM SYAFAWI', "IKHFA' SYAFAWI", 'IDZHAR SYAFAWI', 'HUKUM RO', 'LAM LAFAZHUL', 'IDGHAM MUTAMATHILAIN', 'IDGHAM MUTAQARIBAIN', 'IDGHAM MUTAJANISAIN', 'MAD WAJIB', 'MAD JAIZ MUNFASIL', 'MAD ARID', 'MAD IWAD', 'MAD BADAL', 'MAD LIN', 'MAD SILAH', 'MAD TAMKIN', 'MAD FARQI', 'MAD LAZIM'].includes(header)) return 'HUKUM TAJWID';
+                if (header === 'FASIH') return 'FASIH';
+                if (header === 'LANCAR') return 'LANCAR';
+                return 'LAIN-LAIN'; 
+            } else {
+                if (header.includes('SEBUTAN TUNGGAL') || header.includes('HURUF SAMBUNG') || header === 'BENTUK HURUF SAMBUNG' || header === 'SEBUTAN HURUF SAMBUNG (SUKUN)') return 'SEBUTAN MAKHRAJ';
+                if (['BACAAN QALQALAH', 'BACAAN HURUF BERSABDU', 'MIM & NUN BERSABDU', 'CARA WAQAF', 'TANDA WAQAF', 'ALIF LAM QAMARIAH', 'ALIF LAM SYAMSIAH', 'BACAAN LAIN *', 'BACAAN LAIN'].includes(header)) return 'BACAAN';
+                if (['MAD ASLI', 'IDZHAR HALQI', 'IDGHAM', 'IQLAB', "IKHFA' HAQIQI", 'IDGHAM SYAFAWI', "IKHFA' SYAFAWI", 'IDZHAR SYAFAWI', 'HUKUM RO', 'LAM LAAFZHUL JALALAH', 'IDGHAM MUTAMASILAINI', 'IDGHAM MUTAQORIBAINI', 'IDGHAM MUTAJANISAINI', 'MAD WAJIB MUTTASIL', 'MAD JAIZ MUNFASIL', 'MAD ARID LISSUKUN', 'MAD IWAD', 'MAD BADAL', 'MAD LIN', 'MAD SILAH', 'MAD TAMKIN', 'MAD FARQI', 'MAD LAZIM'].includes(header)) return 'HUKUM TAJWID';
+                if (header === 'FASIH') return 'FASIH';
+                if (header === 'LANCAR') return 'LANCAR';
+                return 'LAIN-LAIN'; 
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            const icInput = document.getElementById('login-ic');
+            icInput.addEventListener('input', function(e) {
+                let val = e.target.value.replace(/\D/g, ''); 
+                if(val.length > 12) val = val.slice(0, 12);
+                let formatted = val;
+                if (val.length > 6) formatted = val.substring(0, 6) + '-' + val.substring(6);
+                if (val.length > 8) formatted = formatted.substring(0, 9) + '-' + formatted.substring(9);
+                e.target.value = formatted;
+            });
+            const addIcInput = document.getElementById('add-student-ic');
+            if (addIcInput) {
+                addIcInput.addEventListener('input', function(e) {
+                    let val = e.target.value.replace(/\D/g, ''); 
+                    if(val.length > 12) val = val.slice(0, 12);
+                    let formatted = val;
+                    if (val.length > 6) formatted = val.substring(0, 6) + '-' + val.substring(6);
+                    if (val.length > 8) formatted = formatted.substring(0, 9) + '-' + formatted.substring(9);
+                    e.target.value = formatted;
+                });
+            }
+        });
+
+        function toggleAdminLogin() {
+            const studentForm = document.getElementById('student-login-form');
+            const adminForm = document.getElementById('admin-login-form');
+            if (studentForm.classList.contains('hidden')) {
+                studentForm.classList.remove('hidden');
+                adminForm.classList.add('hidden');
+            } else {
+                studentForm.classList.add('hidden');
+                adminForm.classList.remove('hidden');
+            }
+        }
+
+        async function fetchAndParseCSV(url, targetClassId) {
+            return new Promise((resolve, reject) => {
+                Papa.parse(url, {
+                    download: true,
+                    header: false,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        try {
+                            const processed = processData(results.data, targetClassId);
+                            classCache[targetClassId] = processed;
+                            resolve(processed);
+                        } catch(e) { reject(e); }
+                    },
+                    error: function(err) { reject(err); }
+                });
+            });
+        }
+
+        async function handleStudentLogin() {
+            const icInputRaw = document.getElementById('login-ic').value;
+            const searchIC = icInputRaw.replace(/\D/g, ''); 
+            if (searchIC.length < 6) {
+                alert("Sila masukkan format no pengenalan / IC yang sah.");
+                return;
+            }
+            const btn = document.getElementById('btn-login-student');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin mr-2"></i> Menyemak Rekod...';
+            btn.disabled = true;
+
+            try {
+                if (!classCache['talaqqi']) classCache['talaqqi'] = await fetchAndParseCSV(CLASSES.talaqqi.url, 'talaqqi');
+                if (!classCache['abahata']) classCache['abahata'] = await fetchAndParseCSV(CLASSES.abahata.url, 'abahata');
+                
+                let tStudent = classCache['talaqqi'].students.find(s => s.ic && s.ic.replace(/\D/g, '') === searchIC);
+                let aStudent = classCache['abahata'].students.find(s => s.ic && s.ic.replace(/\D/g, '') === searchIC);
+
+                let enrolled = [];
+                if (tStudent) enrolled.push({ classId: 'talaqqi', student: tStudent });
+                if (aStudent) enrolled.push({ classId: 'abahata', student: aStudent });
+
+                if (enrolled.length > 0) {
+                    setupStudentPortal(enrolled);
+                } else {
+                    alert("Harap maaf, tiada rekod dijumpai untuk nombor pengenalan ini.\nSila semak semula atau hubungi admin.");
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Ralat semasa berhubung dengan pelayan. Sila cuba lagi sebentar.");
+            } finally {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        function handleAdminLogin() {
+            const pwdInput = document.getElementById('login-password').value;
+            const btn = document.getElementById('btn-login-admin');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin mr-2"></i> Mengesahkan...';
+            btn.disabled = true;
+
+            Papa.parse(PASSWORD_CSV_URL, {
+                download: true,
+                header: false,
+                complete: function(results) {
+                    try {
+                        let fetchedPwd = '';
+                        if (results.data.length > 1 && (results.data[0][0].toLowerCase().includes('password') || results.data[0][0].toLowerCase().includes('laluan'))) {
+                            fetchedPwd = results.data[1][0].trim();
+                        } else if (results.data.length > 0) {
+                            fetchedPwd = results.data[0][0].trim();
+                        }
+                        if (!fetchedPwd) fetchedPwd = 'hafsah123#'; 
+                        
+                        currentAdminPassword = fetchedPwd;
+
+                        if (pwdInput === fetchedPwd) {
+                            document.getElementById('login-screen').classList.add('hidden');
+                            document.getElementById('app-wrapper').classList.remove('hidden');
+                            
+                            document.getElementById('admin-sidebar').className = "admin-sidebar-slim islamic-pattern-bg text-white hidden md:flex flex-col shadow-xl z-20 shrink-0 relative transition-[width] duration-300";
+                            document.getElementById('admin-mobile-header').className = "flex md:hidden islamic-pattern-bg text-white p-3.5 justify-between items-center shadow-md z-20 shrink-0";
+                            document.getElementById('class-selector-container').className = "flex p-4 md:p-8 pb-0 flex-wrap bg-gray-50 z-10 sticky top-0 border-b border-gray-100 shadow-[0_2px_4px_rgba(0,0,0,0.02)]";
+                            document.getElementById('admin-bottom-nav').className = "flex md:hidden fixed bottom-0 left-0 w-full bg-gray-900 text-gray-400 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.3)] justify-around items-center";
+                            
+                            switchTab('dashboard'); 
+                            fetchData(false);
+                        } else {
+                            alert("Kata laluan pentadbir tidak sah.");
+                        }
+                    } catch(e) {
+                        alert("Berlaku ralat ketika membaca kata laluan.");
+                    } finally {
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                        lucide.createIcons();
+                    }
+                },
+                error: function() {
+                    alert("Gagal menghubungi pangkalan data keselamatan Google Sheet.");
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                    lucide.createIcons();
+                }
+            });
+        }
+
+        async function updateAdminPassword() {
+            const oldPwd = document.getElementById('setting-old-pwd').value;
+            const newPwd = document.getElementById('setting-new-pwd').value;
+            const confirmPwd = document.getElementById('setting-confirm-pwd').value;
+
+            if (!oldPwd || !newPwd || !confirmPwd) {
+                alert("Sila isi semua ruangan.");
+                return;
+            }
+            if (oldPwd !== currentAdminPassword) {
+                alert("Kata laluan lama anda tidak tepat.");
+                return;
+            }
+            if (newPwd.length < 5) {
+                alert("Kata laluan baharu mestilah mengandungi sekurang-kurangnya 5 aksara.");
+                return;
+            }
+            if (newPwd !== confirmPwd) {
+                alert("Pengesahan kata laluan baru tidak sepadan.");
+                return;
+            }
+
+            const btn = document.getElementById('btn-save-pwd');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin inline"></i> Menyimpan...';
+            btn.disabled = true;
+
+            try {
+                let payload = { action: "update_password", newPassword: newPwd };
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ payload: JSON.stringify(payload) })
+                });
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    alert("Kata laluan berjaya dikemas kini di dalam Google Sheet!");
+                    currentAdminPassword = newPwd; 
+                    document.getElementById('setting-old-pwd').value = '';
+                    document.getElementById('setting-new-pwd').value = '';
+                    document.getElementById('setting-confirm-pwd').value = '';
+                } else {
+                    alert("Ralat pelayan: " + result.message);
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Gangguan sistem. Sila semak sambungan internet anda dan cuba lagi.");
+            } finally {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        function logout() {
+            currentLoggedInStudent = null;
+            currentLoggedInClass = null;
+            document.getElementById('login-ic').value = '';
+            document.getElementById('login-password').value = '';
+            
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('app-wrapper').classList.add('hidden');
+            
+            const adminBottomNav = document.getElementById('admin-bottom-nav');
+            if (adminBottomNav) {
+                adminBottomNav.classList.add('hidden');
+                adminBottomNav.classList.remove('flex');
+            }
+            
+            isSidebarExpanded = false;
+            const sidebar = document.getElementById('admin-sidebar');
+            if (sidebar) sidebar.className = "hidden";
+            const icon = document.getElementById('sidebar-toggle-icon');
+            if (icon) {
+                icon.setAttribute('data-lucide', 'chevron-right');
+                lucide.createIcons();
+            }
+            
+            document.getElementById('admin-mobile-header').className = "hidden";
+            document.getElementById('class-selector-container').className = "hidden";
+            document.getElementById('admin-bottom-nav').className = "hidden";
+            
+            document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-students').classList.add('hidden');
+            document.getElementById('tab-settings').classList.add('hidden');
+            document.getElementById('tab-student-portal').classList.add('hidden');
+            
+            document.getElementById('student-login-form').classList.remove('hidden');
+            document.getElementById('admin-login-form').classList.add('hidden');
+        }
+
+        function processData(rows, targetClassId) {
+            if(rows.length < 3) throw new Error("Format data CSV tidak lengkap.");
+            let dataObj = { headers: [], baseMarks: {}, students: [], classAverages: {}, classSectionAverages: {}, stats: {}, sectionsList: [] };
+
+            const rawHeaders = rows[0];
+            const rawBaseMarks = rows[1];
+            const rawStudents = rows.slice(2);
+
+            const picIndex = targetClassId === 'talaqqi' ? 37 : 53;
+
+            dataObj.headers = rawHeaders.slice(3, picIndex).map(h => h ? h.trim() : "").filter(h => h);
+            
+            dataObj.headers.forEach((header, index) => {
+                const val = parseFloat(rawBaseMarks[index + 3]);
+                dataObj.baseMarks[header] = isNaN(val) ? 100 : val;
+                const sec = getSection(header, targetClassId);
+                if (!dataObj.sectionsList.includes(sec)) dataObj.sectionsList.push(sec);
+            });
+
+            let categorySums = {};
+            dataObj.headers.forEach(h => categorySums[h] = 0);
+
+            rawStudents.forEach(row => {
+                if(!row[1] || row[1].trim() === "") return;
+                let rawPicUrl = row[picIndex] ? row[picIndex].trim() : '';
+                let picUrl = '';
+                if (rawPicUrl) {
+                    const driveIdMatch = rawPicUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || rawPicUrl.match(/id=([a-zA-Z0-9_-]+)/);
+                    if (driveIdMatch && driveIdMatch[1]) picUrl = `https://lh3.googleusercontent.com/d/${driveIdMatch[1]}`;
+                    else picUrl = rawPicUrl; 
+                } else {
+                    picUrl = generateAvatar(row[1].trim()); 
+                }
+
+                let student = { bil: row[0], nama: row[1], ic: row[2], picUrl: picUrl, marks: {}, percentages: {}, overallAvg: 0, sectionScores: {} };
+                let totalPercent = 0, validCategories = 0;
+                let studentSecSums = {}, studentSecCounts = {};
+                
+                dataObj.sectionsList.forEach(s => { studentSecSums[s] = 0; studentSecCounts[s] = 0; });
+
+                dataObj.headers.forEach((header, index) => {
+                    const mark = parseFloat(row[index + 3]);
+                    const actualMark = isNaN(mark) ? 0 : mark;
+                    const base = dataObj.baseMarks[header];
+                    student.marks[header] = actualMark;
+                    
+                    let pct = base > 0 ? (actualMark / base) * 100 : 0;
+                    if(pct > 100) pct = 100;
+                    student.percentages[header] = pct;
+
+                    totalPercent += pct;
+                    validCategories++;
+                    categorySums[header] += pct;
+                    
+                    const sec = getSection(header, targetClassId);
+                    studentSecSums[sec] += pct;
+                    studentSecCounts[sec]++;
+                });
+
+                student.overallAvg = validCategories > 0 ? (totalPercent / validCategories) : 0;
+                student.rowIndex = rawStudents.indexOf(row) + 3;
+
+                dataObj.sectionsList.forEach(sec => {
+                    student.sectionScores[sec] = studentSecCounts[sec] > 0 ? (studentSecSums[sec] / studentSecCounts[sec]) : 0;
+                });
+                dataObj.students.push(student);
+            });
+
+            const numStudents = dataObj.students.length;
+            let bestCat = "-", worstCat = "-";
+            let highest = -1, lowest = 101;
+            let classTotalAvg = 0;
+
+            if (numStudents > 0) {
+                dataObj.sectionsList.forEach(sec => {
+                    let secSum = 0;
+                    dataObj.students.forEach(stu => { secSum += stu.sectionScores[sec]; });
+                    dataObj.classSectionAverages[sec] = secSum / numStudents;
+                });
+
+                dataObj.headers.forEach(header => {
+                    let avg = categorySums[header] / numStudents;
+                    dataObj.classAverages[header] = avg;
+                    classTotalAvg += avg;
+                    if (avg > highest) { highest = avg; bestCat = header; }
+                    if (avg < lowest) { lowest = avg; worstCat = header; }
+                });
+                classTotalAvg = classTotalAvg / dataObj.headers.length;
+            }
+
+            dataObj.stats = { total: numStudents, classAvg: classTotalAvg, best: bestCat, worst: worstCat };
+            return dataObj;
+        }
+
+        function setClass(classId) {
+            currentClassId = classId;
+            const btnTalaqqi = document.getElementById('btn-class-talaqqi');
+            const btnAbahata = document.getElementById('btn-class-abahata');
+            
+            if (classId === 'talaqqi') {
+                btnTalaqqi.className = "flex-none whitespace-nowrap px-5 py-2.5 rounded-lg bg-quran-700 text-white font-medium text-sm transition-all shadow-sm";
+                btnAbahata.className = "flex-none whitespace-nowrap px-5 py-2.5 rounded-lg text-gray-500 hover:text-quran-700 font-medium text-sm transition-all";
+            } else {
+                btnAbahata.className = "flex-none whitespace-nowrap px-5 py-2.5 rounded-lg bg-quran-700 text-white font-medium text-sm transition-all shadow-sm";
+                btnTalaqqi.className = "flex-none whitespace-nowrap px-5 py-2.5 rounded-lg text-gray-500 hover:text-quran-700 font-medium text-sm transition-all";
+            }
+            fetchData();
+        }
+
+        function fetchData(forceRefresh = false) {
+            if (forceRefresh) classCache[currentClassId] = null; 
+            if (classCache[currentClassId]) {
+                globalData = classCache[currentClassId];
+                renderDashboard();
+                renderStudentList();
+                hideLoading();
+                return;
+            }
+
+            showLoading();
+            Papa.parse(CLASSES[currentClassId].url, {
+                download: true,
+                header: false,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    try {
+                        const processedData = processData(results.data, currentClassId);
+                        classCache[currentClassId] = processedData; 
+                        globalData = processedData;
+                        renderDashboard();
+                        renderStudentList();
+                        hideLoading();
+                    } catch (e) {
+                        console.error(e);
+                        showError();
+                    }
+                },
+                error: function(err) {
+                    console.error(err);
+                    showError();
+                }
+            });
+        }
+
+        function updateMainChart() {
+            const isMobile = window.innerWidth < 768;
+            const filterVal = document.getElementById('chart-section-filter') ? document.getElementById('chart-section-filter').value : 'ALL';
+            let labels = [], dataPts = [], bgColors = [], borderColors = [];
+
+            const colors = [
+                { bg: 'rgba(21, 128, 61, 0.7)', border: 'rgb(21, 128, 61)' }, 
+                { bg: 'rgba(234, 179, 8, 0.7)', border: 'rgb(202, 138, 4)' }, 
+                { bg: 'rgba(59, 130, 246, 0.7)', border: 'rgb(37, 99, 235)' }, 
+                { bg: 'rgba(239, 68, 68, 0.7)', border: 'rgb(220, 38, 38)' }, 
+                { bg: 'rgba(139, 92, 246, 0.7)', border: 'rgb(124, 58, 237)' }, 
+                { bg: 'rgba(20, 184, 166, 0.7)', border: 'rgb(13, 148, 136)' } 
+            ];
+
+            globalData.headers.forEach(h => {
+                const sec = getSection(h, currentClassId);
+                if (filterVal === 'ALL' || filterVal === sec) {
+                    labels.push(h);
+                    dataPts.push(globalData.classAverages[h]);
+                    const secIndex = globalData.sectionsList.indexOf(sec) % colors.length;
+                    bgColors.push(colors[secIndex].bg);
+                    borderColors.push(colors[secIndex].border);
+                }
+            });
+
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            if (mainChartInstance) mainChartInstance.destroy();
+            
+            mainChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Purata Kelas (%)',
+                        data: dataPts,
+                        backgroundColor: filterVal === 'ALL' ? bgColors : bgColors[0], 
+                        borderColor: filterVal === 'ALL' ? borderColors : borderColors[0],
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 100 },
+                        x: { ticks: { maxRotation: 90, minRotation: 45, font: { size: isMobile ? 8 : 9 }, autoSkip: false } }
+                    },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { callbacks: { afterLabel: function(context) { return 'Bahagian: ' + getSection(context.label, currentClassId); } } }
+                    }
+                }
+            });
+        }
+
+        function renderDashboard() {
+            document.getElementById('display-class-title').textContent = CLASSES[currentClassId].name;
+            document.getElementById('stat-total-students').textContent = globalData.stats.total || 0;
+            document.getElementById('stat-avg-class').textContent = (globalData.stats.classAvg || 0).toFixed(1) + '%';
+            document.getElementById('stat-best-category').textContent = globalData.stats.best;
+            document.getElementById('stat-best-category').title = globalData.stats.best;
+            document.getElementById('stat-worst-category').textContent = globalData.stats.worst;
+            document.getElementById('stat-worst-category').title = globalData.stats.worst;
+
+            const isMobile = window.innerWidth < 768;
+            const filterDropdown = document.getElementById('chart-section-filter');
+            if (filterDropdown) {
+                filterDropdown.innerHTML = '<option value="ALL">Semua Bahagian</option>';
+                globalData.sectionsList.forEach(sec => {
+                    filterDropdown.innerHTML += `<option value="${sec}">${sec}</option>`;
+                });
+            }
+
+            const excellenceContainer = document.getElementById('excellence-list-container');
+            if (excellenceContainer) {
+                excellenceContainer.innerHTML = '';
+                let topicAverages = globalData.headers.map(h => {
+                    return { topic: h, avg: globalData.classAverages[h], section: getSection(h, currentClassId) };
+                });
+                
+                topicAverages.sort((a, b) => b.avg - a.avg);
+                let excellentTopics = topicAverages.filter(t => t.avg >= 70);
+                if(excellentTopics.length === 0) excellentTopics = topicAverages.slice(0, 3);
+
+                excellentTopics.forEach(t => {
+                    let badgeClass = t.avg >= 90 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-green-50 text-green-700 border-green-200';
+                    let iconColor = t.avg >= 90 ? 'text-emerald-500' : 'text-green-500';
+                    excellenceContainer.innerHTML += `
+                        <div class="flex items-center p-3 border rounded-xl ${badgeClass}">
+                            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-3 shrink-0 shadow-sm border ${badgeClass.split(' ')[2]}">
+                                <i data-lucide="award" class="w-5 h-5 ${iconColor}"></i>
+                            </div>
+                            <div class="flex-1 overflow-hidden pr-2">
+                                <p class="text-[10px] uppercase font-bold opacity-70 truncate">${t.section}</p>
+                                <h4 class="text-sm font-bold truncate" title="${t.topic}">${t.topic}</h4>
+                            </div>
+                            <div class="text-lg font-black ml-auto shrink-0">${t.avg.toFixed(1)}%</div>
+                        </div>
+                    `;
+                });
+            }
+
+            updateMainChart();
+
+            const targetScore = currentClassId === 'abahata' ? 90 : 100;
+            const targetLabel = currentClassId === 'abahata' ? 'Sasaran Sijil (90%)' : 'Sasaran Khatam (100%)';
+            document.getElementById('dashboard-radar-legend').innerHTML = `
+                <div class="flex items-center"><span class="w-3 h-3 rounded bg-[rgba(21,128,61,0.4)] border border-[rgba(21,128,61,1)] mr-2"></span> Purata Kelas</div>
+                <div class="flex items-center"><span class="w-4 h-0 border-t-2 border-dashed border-red-500 mr-2"></span> ${targetLabel}</div>
+            `;
+
+            const ctxSec = document.getElementById('sectionChart').getContext('2d');
+            if (sectionChartInstance) sectionChartInstance.destroy();
+            const secLabels = globalData.sectionsList;
+            const secDataPts = secLabels.map(s => globalData.classSectionAverages[s]);
+            sectionChartInstance = new Chart(ctxSec, {
+                type: 'radar',
+                data: {
+                    labels: secLabels,
+                    datasets: [
+                        {
+                            label: 'Purata Kelas (%)',
+                            data: secDataPts,
+                            backgroundColor: 'rgba(21, 128, 61, 0.2)', 
+                            borderColor: 'rgba(21, 128, 61, 1)',
+                            pointBackgroundColor: 'rgb(234, 179, 8)', 
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(21, 128, 61)',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Sasaran',
+                            data: secLabels.map(() => targetScore),
+                            backgroundColor: 'transparent',
+                            borderColor: 'rgba(239, 68, 68, 0.8)',
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0,0,0,0.05)' },
+                            suggestedMin: 0, suggestedMax: 100,
+                            ticks: { stepSize: 20, backdropColor: 'transparent' },
+                            pointLabels: { font: { size: isMobile ? 8 : 10, weight: '600' }, color: '#15803d' }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+            lucide.createIcons();
+        }
+
+        function toggleSortOrder() {
+            currentSortOrder = currentSortOrder === 'desc' ? 'asc' : 'desc';
+            const icon = document.getElementById('sort-icon');
+            const text = document.getElementById('sort-text');
+            if (currentSortOrder === 'desc') {
+                text.textContent = 'Markah Tertinggi';
+                icon.setAttribute('data-lucide', 'arrow-down');
+            } else {
+                text.textContent = 'Markah Terendah';
+                icon.setAttribute('data-lucide', 'arrow-up');
+            }
+            lucide.createIcons();
+            renderStudentList();
+            filterStudents();
+        }
+
+        function renderStudentList() {
+            const tbody = document.getElementById('student-table-body');
+            tbody.innerHTML = '';
+            if (globalData.students.length === 0) {
+                document.getElementById('no-student-msg').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('no-student-msg').classList.add('hidden');
+
+            const sortedStudents = [...globalData.students].sort((a, b) => {
+                return currentSortOrder === 'desc' ? b.overallAvg - a.overallAvg : a.overallAvg - b.overallAvg;
+            });
+
+            sortedStudents.forEach((student, index) => {
+                let badgeClass = "";
+                if(student.overallAvg >= 90) badgeClass = "bg-emerald-100 text-emerald-800 font-bold";
+                else if(student.overallAvg >= 70) badgeClass = "bg-green-100 text-green-800";
+                else if(student.overallAvg >= 41) badgeClass = "bg-orange-100 text-orange-800";
+                else badgeClass = "bg-red-100 text-red-800";
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition cursor-pointer";
+                tr.onclick = () => showStudentDetail(student);
+                
+                const escapedName = student.nama.replace(/'/g, "\\'");
+                tr.innerHTML = `
+                    <td class="px-6 py-4 text-sm font-bold text-gray-400">#${index + 1}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <img class="h-8 w-8 rounded-full object-cover border border-gray-200 bg-white shrink-0" src="${student.picUrl}" alt="${student.nama}" onerror="this.src=generateAvatar('${escapedName}')">
+                            <div class="ml-3 text-sm font-medium text-gray-900">${student.nama}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${student.ic || '-'}</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="px-3 py-1.5 rounded-full text-xs font-bold ${badgeClass} inline-flex items-center">
+                            ${student.overallAvg.toFixed(1)}%
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right text-sm font-medium">
+                        <button class="text-quran-600 hover:text-quran-800 flex items-center justify-end w-full">Lihat <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        function filterStudents() {
+            const input = document.getElementById('search-input').value.toLowerCase().replace(/-/g, '');
+            const rows = document.querySelectorAll('#student-table-body tr');
+            let visibleCount = 0;
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const ic = row.cells[2].textContent.toLowerCase().replace(/-/g, '');
+                if (name.includes(input) || ic.includes(input)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            const msg = document.getElementById('no-student-msg');
+            if (visibleCount === 0) msg.classList.remove('hidden');
+            else msg.classList.add('hidden');
+        }
+
+        function showStudentDetail(student) {
+            currentEditingStudent = student;
+            document.getElementById('modal-read-view').classList.remove('hidden');
+            document.getElementById('modal-edit-view').classList.add('hidden');
+            document.getElementById('btn-edit-mode').innerHTML = '<i data-lucide="edit" class="w-4 h-4 mr-1.5"></i> Edit';
+
+            document.getElementById('modal-student-name').textContent = student.nama;
+            document.getElementById('modal-student-ic').textContent = student.ic || 'Tiada Rekod IC';
+            
+            const modalPic = document.getElementById('modal-student-pic');
+            modalPic.src = student.picUrl;
+            modalPic.onerror = function() { this.src = generateAvatar(student.nama); };
+
+            const scoreEl = document.getElementById('modal-overall-score');
+            const gradeEl = document.getElementById('modal-overall-grade');
+            const targetEl = document.getElementById('modal-target-badge');
+
+            scoreEl.textContent = student.overallAvg.toFixed(1) + '%';
+            
+            let colorClass = "", gradeText = "";
+            if (student.overallAvg >= 90) { colorClass = "text-emerald-600"; gradeText = "Cemerlang"; }
+            else if (student.overallAvg >= 70) { colorClass = "text-green-600"; gradeText = "Baik"; }
+            else if (student.overallAvg >= 41) { colorClass = "text-orange-500"; gradeText = "Sederhana"; }
+            else { colorClass = "text-red-600"; gradeText = "Lemah"; }
+
+            scoreEl.className = `text-4xl font-bold ${colorClass}`;
+            gradeEl.className = `text-sm font-bold tracking-widest mt-1 uppercase ${colorClass}`;
+            gradeEl.textContent = gradeText;
+
+            if (currentClassId === 'talaqqi') {
+                targetEl.innerHTML = `<div class="bg-blue-50 text-blue-700 border border-blue-200 px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i> Sasaran Utama: Khatam 30 Juz</div>`;
+            } else {
+                if (student.overallAvg >= 90) {
+                    targetEl.innerHTML = `<div class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center"><i data-lucide="award" class="w-4 h-4 mr-2"></i> Layak Menerima Sijil ABAHATA</div>`;
+                } else {
+                    targetEl.innerHTML = `<div class="bg-amber-50 text-amber-700 border border-amber-200 px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center"><i data-lucide="target" class="w-4 h-4 mr-2"></i> Sasaran Kelayakan Sijil: 90%</div>`;
+                }
+            }
+
+            const ulCemerlang = document.getElementById('modal-cemerlang');
+            const ulBaik = document.getElementById('modal-baik');
+            const ulSederhana = document.getElementById('modal-sederhana');
+            const ulLemah = document.getElementById('modal-lemah');
+            const tbodyDetail = document.getElementById('modal-detail-table');
+            
+            ulCemerlang.innerHTML = ''; ulBaik.innerHTML = ''; ulSederhana.innerHTML = ''; ulLemah.innerHTML = ''; tbodyDetail.innerHTML = '';
+
+            globalData.sectionsList.forEach(section => {
+                const secRow = document.createElement('tr');
+                secRow.className = "bg-quran-50/80 border-b border-quran-100";
+                
+                if (section === 'HUKUM TAJWID') {
+                    secRow.classList.add('pdf-page-break-tajwid');
+                }
+
+                secRow.innerHTML = `
+                    <td colspan="5" class="px-5 py-2 text-xs font-bold text-quran-800 uppercase tracking-wider">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="flex items-center"><i data-lucide="layers" class="w-3 h-3 mr-2 text-quran-600"></i> ${section}</span>
+                            <span class="bg-white px-2 py-0.5 rounded text-quran-700 border border-quran-100">Purata: ${student.sectionScores[section].toFixed(1)}%</span>
+                        </div>
+                    </td>
+                `;
+                tbodyDetail.appendChild(secRow);
+
+                const sectionHeaders = globalData.headers.filter(h => getSection(h, currentClassId) === section);
+                
+                sectionHeaders.forEach(header => {
+                    const pct = student.percentages[header];
+                    const mark = student.marks[header];
+                    const base = globalData.baseMarks[header];
+
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between border-b border-gray-50 pb-1.5 pt-1 last:border-0";
+                    
+                    let itemColorClass = "", targetUl = null, gradeTextRow = "";
+                    if (pct >= 90) { itemColorClass = "text-emerald-600"; targetUl = ulCemerlang; gradeTextRow = "Cemerlang"; }
+                    else if (pct >= 70) { itemColorClass = "text-green-600"; targetUl = ulBaik; gradeTextRow = "Baik"; }
+                    else if (pct >= 41) { itemColorClass = "text-orange-500"; targetUl = ulSederhana; gradeTextRow = "Sederhana"; }
+                    else { itemColorClass = "text-red-600"; targetUl = ulLemah; gradeTextRow = "Lemah"; }
+
+                    li.innerHTML = `<span class="truncate pr-2 text-xs" title="${header}">${header}</span> <strong class="text-xs ${itemColorClass} shrink-0">${pct.toFixed(0)}%</strong>`;
+                    targetUl.appendChild(li);
+
+                    let dotClass = pct >= 90 ? 'bg-emerald-400' : (pct >= 70 ? 'bg-green-400' : (pct >= 41 ? 'bg-orange-400' : 'bg-red-400'));
+                    let badgeClass = pct >= 90 ? 'text-emerald-600' : (pct >= 70 ? 'text-green-600' : (pct >= 41 ? 'text-orange-600' : 'text-red-600'));
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50 transition";
+                    tr.innerHTML = `
+                        <td class="px-5 py-2 border-b border-gray-50 pl-8 relative text-xs">
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full ${dotClass}"></div>
+                            ${header}
+                        </td>
+                        <td class="px-5 py-2 border-b border-gray-50 text-center font-medium text-xs">${mark}</td>
+                        <td class="px-5 py-2 border-b border-gray-50 text-center text-gray-500 text-xs">${base}</td>
+                        <td class="px-5 py-2 border-b border-gray-50 text-center text-xs">
+                            <span class="${badgeClass} font-bold">${pct.toFixed(1)}%</span>
+                        </td>
+                        <td class="px-5 py-2 border-b border-gray-50 text-center text-xs font-bold ${itemColorClass}">
+                            ${gradeTextRow}
+                        </td>
+                    `;
+                    tbodyDetail.appendChild(tr);
+                });
+            });
+
+            const emptyMsg = "<li class='text-gray-400 italic text-xs py-1'>Tiada rekod.</li>";
+            if(ulCemerlang.children.length === 0) ulCemerlang.innerHTML = emptyMsg;
+            if(ulBaik.children.length === 0) ulBaik.innerHTML = emptyMsg;
+            if(ulSederhana.children.length === 0) ulSederhana.innerHTML = emptyMsg;
+            if(ulLemah.children.length === 0) ulLemah.innerHTML = emptyMsg;
+
+            const targetScore = currentClassId === 'abahata' ? 90 : 100;
+            const targetLabel = currentClassId === 'abahata' ? 'Sasaran Sijil (90%)' : 'Sasaran Khatam (100%)';
+            document.getElementById('admin-radar-legend').innerHTML = `
+                <div class="flex items-center"><span class="w-3 h-3 rounded bg-[rgba(234,179,8,0.4)] border border-[rgba(202,138,4,1)] mr-1.5"></span> Prestasi Semasa</div>
+                <div class="flex items-center"><span class="w-3 h-0 border-t-2 border-dashed border-red-500 mr-1.5"></span> ${targetLabel}</div>
+            `;
+
+            const radarLabels = globalData.sectionsList;
+            const radarData = radarLabels.map(s => student.sectionScores[s]);
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            if (radarChartInstance) radarChartInstance.destroy();
+
+            const isMobile = window.innerWidth < 768;
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: radarLabels,
+                    datasets: [
+                        {
+                            label: 'Penguasaan',
+                            data: radarData,
+                            backgroundColor: 'rgba(234, 179, 8, 0.2)', 
+                            borderColor: 'rgba(202, 138, 4, 1)',     
+                            pointBackgroundColor: 'rgba(21, 128, 61, 1)', 
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(21, 128, 61, 1)',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Sasaran',
+                            data: radarLabels.map(() => targetScore),
+                            backgroundColor: 'transparent',
+                            borderColor: 'rgba(239, 68, 68, 0.8)',
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0,0,0,0.05)' },
+                            suggestedMin: 0, suggestedMax: 100,
+                            ticks: { stepSize: 20, backdropColor: 'transparent' },
+                            pointLabels: { font: { size: isMobile ? 8 : 11, weight: 'bold' }, color: '#15803d' }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            lucide.createIcons();
+            const modal = document.getElementById('student-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => { modal.children[0].classList.add('modal-enter-active'); }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('student-modal');
+            modal.children[0].classList.remove('modal-enter-active');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 200);
+        }
+
+        function toggleEditMode() {
+            const readView = document.getElementById('modal-read-view');
+            const editView = document.getElementById('modal-edit-view');
+            const btnEdit = document.getElementById('btn-edit-mode');
+
+            if (readView.classList.contains('hidden')) {
+                readView.classList.remove('hidden'); editView.classList.add('hidden');
+                btnEdit.innerHTML = '<i data-lucide="edit" class="w-4 h-4 mr-1.5"></i> Edit';
+                lucide.createIcons();
+            } else {
+                readView.classList.add('hidden'); editView.classList.remove('hidden');
+                btnEdit.innerHTML = '<i data-lucide="eye" class="w-4 h-4 mr-1.5"></i> Batal Edit';
+                lucide.createIcons();
+                renderEditForm();
+            }
+        }
+
+        function renderEditForm() {
+            const student = currentEditingStudent;
+            if(!student) return;
+            document.getElementById('edit-name').value = student.nama;
+            document.getElementById('edit-image').value = "";
+            const container = document.getElementById('edit-marks-container');
+            container.innerHTML = '';
+
+            globalData.headers.forEach(header => {
+                const maxMark = globalData.baseMarks[header];
+                const currentMark = student.marks[header];
+                const wrapper = document.createElement('div');
+                wrapper.className = "bg-gray-50 p-3 rounded-lg border border-gray-100";
+                
+                let selectHtml = `<select id="edit-mark-${header}" class="w-full mt-1.5 px-2 py-1.5 bg-white border border-gray-200 rounded-md text-sm focus:ring-quran-500 font-medium">`;
+                for (let i = 0; i <= maxMark; i++) {
+                    const selected = (i === currentMark) ? 'selected' : '';
+                    selectHtml += `<option value="${i}" ${selected}>${i}</option>`;
+                }
+                selectHtml += `</select>`;
+
+                wrapper.innerHTML = `
+                    <label class="block text-[11px] md:text-xs font-semibold text-gray-600 truncate" title="${header}">${header}</label>
+                    <div class="text-[10px] text-gray-400 mt-0.5">Maksimum: ${maxMark}</div>
+                    ${selectHtml}
+                `;
+                container.appendChild(wrapper);
+            });
+        }
+
+        function confirmDeleteStudent() {
+            document.getElementById('delete-confirm-modal').classList.remove('hidden');
+            document.getElementById('delete-confirm-modal').classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function hideDeleteConfirm() {
+            document.getElementById('delete-confirm-modal').classList.add('hidden');
+            document.getElementById('delete-confirm-modal').classList.remove('flex');
+        }
+
+        async function proceedDeleteStudent() {
+            const student = currentEditingStudent;
+            const btnConfirm = document.getElementById('btn-confirm-delete');
+            const originalHtml = btnConfirm.innerHTML;
+            btnConfirm.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline mr-2"></i> Memadam...';
+            btnConfirm.disabled = true;
+
+            let payload = {
+                action: 'delete_student',
+                tabName: currentClassId === 'talaqqi' ? 'TALAQQI AL QURAN' : 'KELAS ABAHATA',
+                rowIndex: student.rowIndex
+            };
+
+            try {
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ payload: JSON.stringify(payload) })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    hideDeleteConfirm();
+                    closeModal();
+                    alert("Pelajar berjaya dihapuskan dari pangkalan data!");
+                    fetchData(true); 
+                } else {
+                    alert("Ralat pelayan: " + result.message);
+                    btnConfirm.innerHTML = originalHtml;
+                    btnConfirm.disabled = false;
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Terjadi masalah sistem semasa memadam pelajar.");
+                btnConfirm.innerHTML = originalHtml;
+                btnConfirm.disabled = false;
+            }
+        }
+
+        async function saveStudentData() {
+            const student = currentEditingStudent;
+            const btnSave = document.getElementById('btn-save');
+            const fileInput = document.getElementById('edit-image');
+            
+            let updatedMarks = {};
+            globalData.headers.forEach(header => {
+                const selectElement = document.getElementById(`edit-mark-${header}`);
+                if (selectElement) updatedMarks[header] = parseFloat(selectElement.value);
+            });
+
+            let payload = {
+                tabName: currentClassId === 'talaqqi' ? 'TALAQQI AL QURAN' : 'KELAS ABAHATA',
+                rowIndex: student.rowIndex,
+                name: document.getElementById('edit-name').value.trim(),
+                marks: updatedMarks,
+                image: null, mimeType: null
+            };
+
+            const originalBtnHtml = btnSave.innerHTML;
+            btnSave.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i> Menyimpan...';
+            btnSave.disabled = true;
+
+            try {
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    payload.mimeType = file.type;
+                    payload.image = await convertToBase64(file);
+                }
+
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ payload: JSON.stringify(payload) })
+                });
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    alert("Maklumat berjaya dikemas kini!");
+                    closeModal();
+                    fetchData(true); 
+                } else { alert("Ralat pelayan: " + result.message); }
+            } catch (error) {
+                console.error(error);
+                alert("Terjadi masalah sistem. Sila semak sambungan internet anda.");
+            } finally {
+                btnSave.innerHTML = originalBtnHtml; btnSave.disabled = false; lucide.createIcons();
+            }
+        }
+
+        function setupStudentPortal(enrolled) {
+            studentEnrolledClasses = enrolled;
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-wrapper').classList.remove('hidden');
+            document.getElementById('admin-sidebar').className = 'hidden';
+            document.getElementById('admin-mobile-header').className = 'hidden';
+            document.getElementById('class-selector-container').className = 'hidden';
+            
+            const adminBottomNav = document.getElementById('admin-bottom-nav');
+            if (adminBottomNav) adminBottomNav.className = 'hidden';
+
+            document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-students').classList.add('hidden');
+            document.getElementById('tab-settings').classList.add('hidden');
+            document.getElementById('tab-student-portal').classList.remove('hidden');
+            
+            const selectorContainer = document.getElementById('portal-class-selector');
+            const badgeSingle = document.getElementById('portal-student-class');
+
+            if (enrolled.length > 1) {
+                selectorContainer.classList.remove('hidden');
+                badgeSingle.classList.add('hidden');
+                selectorContainer.innerHTML = '';
+                enrolled.forEach((enc, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = `flex-none whitespace-nowrap px-4 py-2 text-sm font-bold rounded-full border transition-all ${index === 0 ? 'bg-quran-700 text-white border-quran-700 shadow-sm' : 'bg-white text-quran-700 border-quran-200 hover:bg-quran-50'}`;
+                    btn.innerHTML = enc.classId === 'talaqqi' ? '<i data-lucide="book" class="w-3.5 h-3.5 inline mr-1"></i> Talaqqi Al-Quran' : '<i data-lucide="library" class="w-3.5 h-3.5 inline mr-1"></i> Kelas ABAHATA';
+                    btn.onclick = () => switchPortalClass(index, btn);
+                    selectorContainer.appendChild(btn);
+                });
+            } else {
+                selectorContainer.classList.add('hidden');
+                badgeSingle.classList.remove('hidden');
+                badgeSingle.textContent = enrolled[0].classId === 'talaqqi' ? 'Talaqqi Al-Quran' : 'Kelas ABAHATA';
+            }
+            switchPortalClass(0, selectorContainer.children[0] || null);
+        }
+
+        function switchPortalClass(index, activeBtn) {
+            const enc = studentEnrolledClasses[index];
+            currentLoggedInStudent = enc.student;
+            currentLoggedInClass = enc.classId;
+            globalData = classCache[enc.classId]; 
+
+            if (activeBtn) {
+                const container = document.getElementById('portal-class-selector');
+                Array.from(container.children).forEach(btn => {
+                    btn.className = 'flex-none whitespace-nowrap px-4 py-2 text-sm font-bold rounded-full border transition-all bg-white text-quran-700 border-quran-200 hover:bg-quran-50';
+                });
+                activeBtn.className = 'flex-none whitespace-nowrap px-4 py-2 text-sm font-bold rounded-full border transition-all bg-quran-700 text-white border-quran-700 shadow-sm';
+            }
+            renderStudentPortal(enc.student);
+        }
+
+        function renderStudentPortal(student) {
+            document.getElementById('portal-student-name').textContent = student.nama;
+            document.getElementById('portal-student-ic').textContent = student.ic || '-';
+            document.getElementById('portal-student-class').textContent = currentLoggedInClass === 'talaqqi' ? 'Kelas Talaqqi Al-Quran' : 'Kelas ABAHATA';
+            
+            const picEl = document.getElementById('portal-student-pic');
+            picEl.src = student.picUrl;
+            picEl.onerror = function() {
+                this.src = generateAvatar(student.nama);
+            };
+
+            const scoreEl = document.getElementById('portal-overall-score');
+            const gradeEl = document.getElementById('portal-overall-grade');
+            const targetEl = document.getElementById('portal-target-badge');
+
+            scoreEl.textContent = student.overallAvg.toFixed(1) + '%';
+            
+            let colorClass = "", gradeText = "";
+            if (student.overallAvg >= 90) { colorClass = "text-emerald-600"; gradeText = "Cemerlang"; }
+            else if (student.overallAvg >= 70) { colorClass = "text-green-600"; gradeText = "Baik"; }
+            else if (student.overallAvg >= 41) { colorClass = "text-orange-500"; gradeText = "Sederhana"; }
+            else { colorClass = "text-red-600"; gradeText = "Lemah"; }
+
+            scoreEl.className = `text-5xl md:text-6xl font-bold tracking-tight ${colorClass}`;
+            gradeEl.className = `text-base md:text-lg font-bold tracking-widest mt-2 uppercase ${colorClass}`;
+            gradeEl.textContent = gradeText;
+
+            if (currentLoggedInClass === 'talaqqi') {
+                targetEl.innerHTML = `<div class="bg-blue-50 text-blue-700 border border-blue-200 px-3 py-2.5 rounded-xl text-xs md:text-sm font-semibold flex items-center justify-center"><i data-lucide="book-open" class="w-4 h-4 md:w-5 md:h-5 mr-2"></i> Sasaran Utama: Khatam 30 Juz</div>`;
+            } else {
+                if (student.overallAvg >= 90) {
+                    targetEl.innerHTML = `<div class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-2.5 rounded-xl text-xs md:text-sm font-semibold flex items-center justify-center"><i data-lucide="award" class="w-4 h-4 md:w-5 md:h-5 mr-2"></i> Layak Menerima Sijil ABAHATA</div>`;
+                } else {
+                    targetEl.innerHTML = `<div class="bg-amber-50 text-amber-700 border border-amber-200 px-3 py-2.5 rounded-xl text-xs md:text-sm font-semibold flex items-center justify-center"><i data-lucide="target" class="w-4 h-4 md:w-5 md:h-5 mr-2"></i> Sasaran Kelayakan Sijil: 90%</div>`;
+                }
+            }
+
+            const ulCemerlang = document.getElementById('portal-cemerlang');
+            const ulBaik = document.getElementById('portal-baik');
+            const ulSederhana = document.getElementById('portal-sederhana');
+            const ulLemah = document.getElementById('portal-lemah');
+            const tbodyDetail = document.getElementById('portal-detail-table');
+            
+            ulCemerlang.innerHTML = ''; ulBaik.innerHTML = ''; ulSederhana.innerHTML = ''; ulLemah.innerHTML = ''; tbodyDetail.innerHTML = '';
+
+            globalData.sectionsList.forEach(section => {
+                const secRow = document.createElement('tr');
+                secRow.className = "bg-quran-50/80 border-b border-quran-100";
+                
+                if (section === 'HUKUM TAJWID') {
+                    secRow.classList.add('pdf-page-break-tajwid');
+                }
+
+                secRow.innerHTML = `
+                    <td colspan="5" class="px-4 py-3 text-[11px] md:text-xs font-bold text-quran-800 uppercase tracking-wider">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="flex items-center"><i data-lucide="layers" class="w-3 h-3 md:w-4 md:h-4 mr-2 text-quran-600"></i> ${section}</span>
+                            <span class="bg-white px-2 py-0.5 rounded text-quran-700 border border-quran-200">Purata: ${student.sectionScores[section].toFixed(1)}%</span>
+                        </div>
+                    </td>
+                `;
+                tbodyDetail.appendChild(secRow);
+
+                const sectionHeaders = globalData.headers.filter(h => getSection(h, currentLoggedInClass) === section);
+                
+                sectionHeaders.forEach(header => {
+                    const pct = student.percentages[header];
+                    const mark = student.marks[header];
+                    const base = globalData.baseMarks[header];
+
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between border-b border-gray-50 pb-2 pt-2 last:border-0 text-[13px] md:text-sm";
+                    
+                    let itemColorClass = "", targetUl = null, gradeTextRow = "";
+                    if (pct >= 90) { itemColorClass = "text-emerald-600"; targetUl = ulCemerlang; gradeTextRow = "Cemerlang"; }
+                    else if (pct >= 70) { itemColorClass = "text-green-600"; targetUl = ulBaik; gradeTextRow = "Baik"; }
+                    else if (pct >= 41) { itemColorClass = "text-orange-500"; targetUl = ulSederhana; gradeTextRow = "Sederhana"; }
+                    else { itemColorClass = "text-red-600"; targetUl = ulLemah; gradeTextRow = "Lemah"; }
+
+                    li.innerHTML = `<span class="pr-2 text-gray-700 text-sm whitespace-normal leading-tight" title="${header}">${header}</span> <strong class="${itemColorClass} shrink-0 text-sm">${pct.toFixed(0)}%</strong>`;
+                    targetUl.appendChild(li);
+
+                    let dotClass = pct >= 90 ? 'bg-emerald-400' : (pct >= 70 ? 'bg-green-400' : (pct >= 41 ? 'bg-orange-400' : 'bg-red-400'));
+                    let badgeClass = pct >= 90 ? 'bg-emerald-50 text-emerald-700' : (pct >= 70 ? 'bg-green-50 text-green-700' : (pct >= 41 ? 'bg-orange-50 text-orange-700' : 'bg-red-50 text-red-700'));
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50 transition";
+                    tr.innerHTML = `
+                        <td class="px-4 py-3 border-b border-gray-50 pl-6 md:pl-8 relative text-xs md:text-sm font-medium text-gray-700">
+                            <div class="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full ${dotClass}"></div>
+                            ${header}
+                        </td>
+                        <td class="px-4 py-3 border-b border-gray-50 text-center font-bold text-xs md:text-sm text-gray-800">${mark}</td>
+                        <td class="px-4 py-3 border-b border-gray-50 text-center text-gray-400 text-xs md:text-sm">${base}</td>
+                        <td class="px-4 py-3 border-b border-gray-50 text-center text-xs md:text-sm">
+                            <span class="${badgeClass} px-2 py-1 rounded font-bold">${pct.toFixed(1)}%</span>
+                        </td>
+                        <td class="px-4 py-3 border-b border-gray-50 text-center text-xs md:text-sm font-bold ${itemColorClass}">
+                            ${gradeTextRow}
+                        </td>
+                    `;
+                    tbodyDetail.appendChild(tr);
+                });
+            });
+
+            const emptyMsg = "<li class='text-gray-400 italic text-sm py-2 text-center'>Tiada rekod.</li>";
+            if(ulCemerlang.children.length === 0) ulCemerlang.innerHTML = emptyMsg;
+            if(ulBaik.children.length === 0) ulBaik.innerHTML = emptyMsg;
+            if(ulSederhana.children.length === 0) ulSederhana.innerHTML = emptyMsg;
+            if(ulLemah.children.length === 0) ulLemah.innerHTML = emptyMsg;
+
+            const targetScore = currentLoggedInClass === 'abahata' ? 90 : 100;
+            const targetLabel = currentLoggedInClass === 'abahata' ? 'Sasaran Sijil (90%)' : 'Sasaran Khatam (100%)';
+            document.getElementById('portal-radar-legend').innerHTML = `
+                <div class="flex items-center"><span class="w-3 h-3 rounded bg-[rgba(234,179,8,0.4)] border border-[rgba(202,138,4,1)] mr-1.5"></span> Prestasi Semasa</div>
+                <div class="flex items-center"><span class="w-3 h-0 border-t-2 border-dashed border-red-500 mr-1.5"></span> ${targetLabel}</div>
+            `;
+
+            const radarLabels = globalData.sectionsList;
+            const radarData = radarLabels.map(s => student.sectionScores[s]);
+            const ctx = document.getElementById('portalRadarChart').getContext('2d');
+            if (portalRadarChartInstance) portalRadarChartInstance.destroy();
+
+            const isMobile = window.innerWidth < 768;
+            portalRadarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: radarLabels,
+                    datasets: [
+                        {
+                            label: 'Penguasaan Diri',
+                            data: radarData,
+                            backgroundColor: 'rgba(234, 179, 8, 0.15)',
+                            borderColor: 'rgba(202, 138, 4, 1)',
+                            pointBackgroundColor: 'rgba(21, 128, 61, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(21, 128, 61, 1)',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Sasaran',
+                            data: radarLabels.map(() => targetScore),
+                            backgroundColor: 'transparent',
+                            borderColor: 'rgba(239, 68, 68, 0.8)',
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0,0,0,0.05)' },
+                            suggestedMin: 0, suggestedMax: 100,
+                            ticks: { stepSize: 20, backdropColor: 'transparent' },
+                            pointLabels: { font: { size: isMobile ? 9 : 12, weight: 'bold' }, color: '#15803d' }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            lucide.createIcons();
+        }
+
+        function togglePortalEdit() {
+            const editSec = document.getElementById('portal-edit-section');
+            if (editSec.classList.contains('hidden')) {
+                editSec.classList.remove('hidden');
+                document.getElementById('portal-edit-image').value = ""; 
+            } else {
+                editSec.classList.add('hidden');
+            }
+        }
+
+        async function savePortalPicture() {
+            const fileInput = document.getElementById('portal-edit-image');
+            if (fileInput.files.length === 0) {
+                alert("Sila pilih gambar terlebih dahulu.");
+                return;
+            }
+
+            const btnSave = document.getElementById('portal-btn-save');
+            const originalHtml = btnSave.innerHTML;
+            btnSave.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memuat Naik...';
+            btnSave.disabled = true;
+
+            try {
+                const file = fileInput.files[0];
+                const base64Data = await convertToBase64(file);
+                
+                let payload = {
+                    tabName: currentLoggedInClass === 'talaqqi' ? 'TALAQQI AL QURAN' : 'KELAS ABAHATA',
+                    rowIndex: currentLoggedInStudent.rowIndex,
+                    name: currentLoggedInStudent.nama, 
+                    marks: {}, 
+                    mimeType: file.type,
+                    image: base64Data
+                };
+
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ payload: JSON.stringify(payload) })
+                });
+
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    alert("Gambar berjaya dikemas kini! \n\nSila 'Log Keluar' dan masuk semula sebentar lagi untuk melihat gambar baharu (Google mungkin ambil masa sikit untuk muat turun ke sini).");
+                    classCache[currentLoggedInClass] = null; 
+                    togglePortalEdit();
+                } else {
+                    alert("Ralat memuat naik: " + result.message);
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Gangguan internet ketika cuba memuat naik gambar.");
+            } finally {
+                btnSave.innerHTML = originalHtml;
+                btnSave.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        function switchTab(tabId) {
+            document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-students').classList.add('hidden');
+            document.getElementById('tab-settings').classList.add('hidden');
+            document.getElementById('tab-student-portal').classList.add('hidden');
+
+            const btns = ['btn-dashboard', 'btn-students', 'btn-settings'];
+            btns.forEach(id => {
+                const b = document.getElementById(id);
+                if (b) b.className = "nav-button w-full flex items-center text-sm font-medium text-quran-100 hover:bg-quran-800/50 hover:text-white border-l-4 border-transparent transition-colors mt-1 py-3";
+            });
+            
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) activeBtn.className = "nav-button w-full flex items-center text-sm font-medium bg-quran-800 border-l-4 border-gold-500 text-white transition-colors mt-1 py-3";
+            
+            const mobileBtns = ['btn-mobile-dashboard', 'btn-mobile-students', 'btn-mobile-settings'];
+            mobileBtns.forEach(id => {
+                const b = document.getElementById(id);
+                if (b) b.className = "mobile-nav-btn flex-1 flex flex-col items-center py-2.5 border-t-4 border-transparent hover:text-white transition-all";
+            });
+            
+            const activeMobileBtn = document.getElementById('btn-mobile-' + tabId);
+            if (activeMobileBtn) activeMobileBtn.className = "mobile-nav-btn mobile-nav-active flex-1 flex flex-col items-center py-2.5 border-t-4 transition-all shadow-inner";
+
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('main-scroll-area').scrollTop = 0;
+        }
+
+        function showLoading() {
+            document.getElementById('loading-state').classList.remove('hidden');
+            document.getElementById('error-state').classList.add('hidden');
+            document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-students').classList.add('hidden');
+            document.getElementById('tab-settings').classList.add('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-state').classList.add('hidden');
+            switchTab('dashboard');
+        }
+
+        function showError() {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('error-state').classList.remove('hidden');
+        }
+
+        function convertToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function resetAddStudentForm() {
+            const step2 = document.getElementById('add-student-step-2');
+            const footer = document.getElementById('add-student-footer');
+            const msg = document.getElementById('ic-check-msg');
+            if (step2) step2.classList.add('hidden');
+            if (footer) footer.classList.add('hidden');
+            if (msg) {
+                msg.classList.add('hidden');
+                msg.innerHTML = '';
+            }
+        }
+
+        function toggleAddStudentModal() {
+            const modal = document.getElementById('add-student-modal');
+            if (!modal) return;
+            if (modal.classList.contains('hidden')) {
+                const nameInput = document.getElementById('add-student-name');
+                const icInput = document.getElementById('add-student-ic');
+                const imgInput = document.getElementById('add-student-image');
+                if(nameInput) nameInput.value = '';
+                if(icInput) icInput.value = '';
+                if(imgInput) imgInput.value = '';
+                resetAddStudentForm();
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => { modal.children[0].classList.add('modal-enter-active'); }, 10);
+            } else {
+                modal.children[0].classList.remove('modal-enter-active');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 200);
+            }
+        }
+
+        async function checkStudentIC() {
+            const icInput = document.getElementById('add-student-ic').value.trim();
+            const searchIC = icInput.replace(/\D/g, '');
+            const classIdRaw = document.getElementById('add-student-class').value;
+            const classId = classIdRaw === 'TALAQQI AL QURAN' ? 'talaqqi' : 'abahata';
+            
+            const msgEl = document.getElementById('ic-check-msg');
+            const step2 = document.getElementById('add-student-step-2');
+            const footer = document.getElementById('add-student-footer');
+            const btnCheck = document.getElementById('btn-check-ic');
+
+            if (searchIC.length < 6) {
+                msgEl.textContent = "Sila masukkan no IC sekurang-kurangnya 6 digit.";
+                msgEl.className = "text-[13px] font-medium text-red-500 block mt-2";
+                msgEl.classList.remove('hidden');
+                return;
+            }
+
+            const originalHtml = btnCheck.innerHTML;
+            btnCheck.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>';
+            btnCheck.disabled = true;
+
+            try {
+                if (!classCache[classId]) {
+                    classCache[classId] = await fetchAndParseCSV(CLASSES[classId].url, classId);
+                }
+
+                const existingStudent = classCache[classId].students.find(s => s.ic && s.ic.replace(/\D/g, '') === searchIC);
+
+                if (existingStudent) {
+                    msgEl.innerHTML = `<i data-lucide="x-circle" class="w-4 h-4 inline mr-1 mb-0.5"></i> Pelajar telah berdaftar dalam kelas ini.`;
+                    msgEl.className = "text-xs font-semibold text-red-700 bg-red-50 p-2.5 rounded-lg border border-red-200 block mt-3 flex items-center";
+                    step2.classList.add('hidden');
+                    footer.classList.add('hidden');
+                } else {
+                    msgEl.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 inline mr-1 mb-0.5"></i> IC Sah. Sila lengkapkan butiran.`;
+                    msgEl.className = "text-xs font-semibold text-emerald-700 bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 block mt-3 flex items-center";
+                    step2.classList.remove('hidden');
+                    footer.classList.remove('hidden');
+                    setTimeout(() => document.getElementById('add-student-name').focus(), 100);
+                }
+                msgEl.classList.remove('hidden');
+                lucide.createIcons();
+            } catch (e) {
+                msgEl.textContent = "Ralat ketika menyemak pangkalan data.";
+                msgEl.className = "text-xs font-medium text-red-500 block mt-2";
+                msgEl.classList.remove('hidden');
+            } finally {
+                btnCheck.innerHTML = originalHtml;
+                btnCheck.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        async function submitNewStudent() {
+            const studentClass = document.getElementById('add-student-class').value;
+            const name = document.getElementById('add-student-name').value.trim();
+            const ic = document.getElementById('add-student-ic').value.trim();
+            const fileInput = document.getElementById('add-student-image');
+
+            if (!name) {
+                alert("Sila lengkapkan Nama Penuh Pelajar.");
+                return;
+            }
+
+            const btnSave = document.getElementById('btn-add-student-save');
+            const originalHtml = btnSave.innerHTML;
+            btnSave.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin inline"></i> Menyimpan...';
+            btnSave.disabled = true;
+
+            try {
+                let payload = {
+                    action: 'add_student',
+                    tabName: studentClass,
+                    name: name,
+                    ic: ic,
+                    mimeType: null,
+                    image: null
+                };
+
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    payload.mimeType = file.type;
+                    payload.image = await convertToBase64(file);
+                }
+
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ payload: JSON.stringify(payload) })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    alert("Pelajar baharu berjaya ditambah ke dalam pangkalan data!");
+                    toggleAddStudentModal();
+                    fetchData(true); 
+                } else {
+                    alert("Ralat pelayan: " + result.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Terjadi masalah sistem. Sila semak sambungan internet anda.");
+            } finally {
+                btnSave.innerHTML = originalHtml;
+                btnSave.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        // ==========================================
+        // FUNGSI MUAT TURUN PDF (HTML2PDF)
+        // ==========================================
+        async function downloadDashboardPDF(btn) {
+            const element = document.getElementById('tab-dashboard');
+            const scrollArea = document.getElementById('main-scroll-area');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i> Sedia PDF...';
+            btn.disabled = true;
+
+            const noPrintEls = element.querySelectorAll('.no-print');
+            noPrintEls.forEach(el => el.style.display = 'none');
+            
+            // Simpan kedudukan skrol asal & paksa skrol ke atas
+            const origScrollTop = scrollArea.scrollTop;
+            scrollArea.scrollTop = 0;
+            window.scrollTo(0, 0);
+
+            // [Trik Fit Kertas]: Besarkan width supaya konten memanjang, 
+            // bila html2pdf kecilkan ke A4, ia tidak akan overflow ke page 2
+            const origWidth = element.style.width;
+            const origPosition = element.style.position;
+            const origLeft = element.style.left;
+            const origTop = element.style.top;
+            const origZIndex = element.style.zIndex;
+            
+            element.style.position = 'absolute';
+            element.style.left = '0px';
+            element.style.top = '0px';
+            element.style.width = '1440px'; 
+            element.style.zIndex = '9999';
+            
+            // Tunggu render & animasi selesai
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            const contentHeight = element.scrollHeight;
+
+            const opt = {
+                margin: 0,
+                filename: `Laporan_Kelas_${CLASSES[currentClassId].name.replace(/\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0, scrollX: 0, windowWidth: 1440 },
+                jsPDF: { unit: 'px', format: [1440, contentHeight], orientation: 1440 > contentHeight ? 'landscape' : 'portrait' } 
+            };
+
+            try {
+                const canvas = await html2canvas(element, { scale: 2, useCORS: true, windowWidth: 1440, scrollY: 0, scrollX: 0 });
+                await html2pdf().set(opt).from(canvas).save();
+            } catch (e) {
+                console.error(e);
+                alert('Gagal memuat turun PDF. Ralat sistem.');
+            }
+
+            element.style.position = origPosition;
+            element.style.left = origLeft;
+            element.style.top = origTop;
+            element.style.width = origWidth;
+            element.style.zIndex = origZIndex;
+            scrollArea.scrollTop = origScrollTop; // Kembalikan posisi skrol
+
+            noPrintEls.forEach(el => el.style.display = '');
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+            lucide.createIcons();
+        }
+
+        async function downloadAdminStudentPDF(btn) {
+            const modalContainer = document.getElementById('admin-modal-content');
+            const scrollArea = document.getElementById('admin-modal-scroll-area');
+            const tableContainer = document.getElementById('admin-table-container');
+            
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 md:mr-1.5 animate-spin"></i> <span class="hidden md:inline">Sedia...</span>';
+            btn.disabled = true;
+
+            const noPrintEls = modalContainer.querySelectorAll('.no-print');
+            noPrintEls.forEach(el => el.style.display = 'none');
+
+            const scrollableLists = modalContainer.querySelectorAll('ul.overflow-y-auto');
+            scrollableLists.forEach(ul => {
+                ul.dataset.origMaxHeight = ul.style.maxHeight || '';
+                ul.dataset.origOverflow = ul.style.overflow || '';
+                ul.style.maxHeight = 'none';
+                ul.style.overflow = 'visible';
+            });
+            
+            const tableContainers = modalContainer.querySelectorAll('.overflow-x-auto');
+            tableContainers.forEach(container => {
+                container.dataset.origOverflowX = container.style.overflowX || '';
+                container.style.overflowX = 'visible';
+            });
+
+            // Simpan kedudukan skrol asal & paksa skrol ke atas
+            const origScrollTop = scrollArea.scrollTop;
+            scrollArea.scrollTop = 0;
+            window.scrollTo(0, 0);
+
+            const origClasses = modalContainer.className;
+            const origMaxHeight = modalContainer.style.maxHeight;
+            const origOverflow = scrollArea.style.overflow;
+            const origWidth = modalContainer.style.width;
+            
+            modalContainer.classList.remove('overflow-hidden', 'max-w-4xl');
+            modalContainer.style.maxHeight = 'none';
+            scrollArea.style.overflow = 'visible';
+            modalContainer.style.width = '1024px'; 
+            
+            const origTransform = modalContainer.style.transform;
+            const origPosition = modalContainer.style.position;
+            const origLeft = modalContainer.style.left;
+            const origTop = modalContainer.style.top;
+            const origZIndex = modalContainer.style.zIndex;
+
+            modalContainer.style.transform = 'none'; 
+            modalContainer.style.position = 'absolute'; 
+            modalContainer.style.left = '0px'; 
+            modalContainer.style.top = '0px'; 
+            modalContainer.style.zIndex = '9999';
+            
+            if(tableContainer) tableContainer.classList.add('pdf-page-break'); 
+
+            // Tunggu render
+            await new Promise(resolve => setTimeout(resolve, 800));
+
+            const contentHeight = modalContainer.scrollHeight;
+
+            const opt = {
+                margin: 0, 
+                filename: `Laporan_${currentEditingStudent.nama.replace(/\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { scale: 2, useCORS: true, windowWidth: 1024, scrollY: 0, scrollX: 0 },
+                jsPDF: { unit: 'px', format: [1024, contentHeight], orientation: 'portrait' } 
+            };
+
+            try {
+                const canvas = await html2canvas(modalContainer, { scale: 2, useCORS: true, windowWidth: 1024, scrollY: 0, scrollX: 0 });
+                await html2pdf().set(opt).from(canvas).save();
+            } catch (e) {
+                console.error(e);
+                alert('Gagal memuat turun PDF.');
+            }
+
+            if(tableContainer) tableContainer.classList.remove('pdf-page-break');
+            
+            modalContainer.className = origClasses;
+            modalContainer.style.maxHeight = origMaxHeight;
+            scrollArea.style.overflow = origOverflow;
+            modalContainer.style.width = origWidth;
+            
+            modalContainer.style.transform = origTransform;
+            modalContainer.style.position = origPosition;
+            modalContainer.style.left = origLeft;
+            modalContainer.style.top = origTop;
+            modalContainer.style.zIndex = origZIndex;
+
+            scrollArea.scrollTop = origScrollTop;
+            
+            scrollableLists.forEach(ul => {
+                ul.style.maxHeight = ul.dataset.origMaxHeight;
+                ul.style.overflow = ul.dataset.origOverflow;
+            });
+            tableContainers.forEach(container => {
+                container.style.overflowX = container.dataset.origOverflowX;
+            });
+            
+            noPrintEls.forEach(el => el.style.display = '');
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+            lucide.createIcons();
+        }
+
+        async function downloadPortalPDF(btn) {
+            const element = document.getElementById('tab-student-portal');
+            const scrollArea = document.getElementById('main-scroll-area');
+            const tableContainer = document.getElementById('portal-table-container');
+            
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 md:mr-2 animate-spin"></i> <span class="hidden md:inline">Sedia...</span>';
+            btn.disabled = true;
+
+            const noPrintEls = element.querySelectorAll('.no-print');
+            noPrintEls.forEach(el => el.style.display = 'none');
+            
+            const scrollableLists = element.querySelectorAll('ul.overflow-y-auto');
+            scrollableLists.forEach(ul => {
+                ul.dataset.origMaxHeight = ul.style.maxHeight || '';
+                ul.dataset.origOverflow = ul.style.overflow || '';
+                ul.style.maxHeight = 'none';
+                ul.style.overflow = 'visible';
+            });
+            
+            const tableContainers = element.querySelectorAll('.overflow-x-auto');
+            tableContainers.forEach(container => {
+                container.dataset.origOverflowX = container.style.overflowX || '';
+                container.style.overflowX = 'visible';
+            });
+
+            // Simpan kedudukan skrol asal & paksa skrol ke atas
+            const origScrollTop = scrollArea.scrollTop;
+            scrollArea.scrollTop = 0;
+            window.scrollTo(0, 0);
+
+            const origClasses = element.className;
+            const origWidth = element.style.width;
+            const origOverflow = element.style.overflow;
+            
+            element.classList.remove('mx-auto', 'max-w-5xl', 'overflow-hidden');
+            element.style.width = '1024px'; 
+            element.style.overflow = 'visible';
+
+            const origPosition = element.style.position;
+            const origLeft = element.style.left;
+            const origTop = element.style.top;
+            const origZIndex = element.style.zIndex;
+            
+            element.style.position = 'absolute';
+            element.style.left = '0px';
+            element.style.top = '0px';
+            element.style.zIndex = '9999';
+
+            if(tableContainer) tableContainer.classList.add('pdf-page-break'); 
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            const contentHeight = element.scrollHeight;
+
+            const opt = {
+                margin: 0, 
+                filename: `Profil_Prestasi_${currentLoggedInStudent.nama.replace(/\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { scale: 2, useCORS: true, windowWidth: 1024, scrollY: 0, scrollX: 0 },
+                jsPDF: { unit: 'px', format: [1024, contentHeight], orientation: 'portrait' } 
+            };
+            
+            try {
+                const canvas = await html2canvas(element, { scale: 2, useCORS: true, windowWidth: 1024, scrollY: 0, scrollX: 0 });
+                await html2pdf().set(opt).from(canvas).save();
+            } catch (e) {
+                console.error(e);
+                alert('Gagal memuat turun PDF.');
+            }
+
+            if(tableContainer) tableContainer.classList.remove('pdf-page-break');
+            
+            element.className = origClasses;
+            element.style.width = origWidth;
+            element.style.overflow = origOverflow;
+            element.style.position = origPosition;
+            element.style.left = origLeft;
+            element.style.top = origTop;
+            element.style.zIndex = origZIndex;
+            
+            scrollArea.scrollTop = origScrollTop; // Kembalikan posisi skrol
+
+            scrollableLists.forEach(ul => {
+                ul.style.maxHeight = ul.dataset.origMaxHeight;
+                ul.style.overflow = ul.dataset.origOverflow;
+            });
+            tableContainers.forEach(container => {
+                container.style.overflowX = container.dataset.origOverflowX;
+            });
+            
+            noPrintEls.forEach(el => el.style.display = '');
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+            lucide.createIcons();
+        }
+
+        // ==========================================
+        // FUNGSI MUAT TURUN EXCEL (CSV)
+        // ==========================================
+
+        function downloadCSV(csvContent, filename) {
+            // Tambah BOM supaya Excel baca UTF-8 (elak ralat font Arabic/Special Chars)
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' }); 
+            const link = document.createElement("a");
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        function generateSingleStudentCSV(student, classId) {
+            let className = classId === 'talaqqi' ? 'Talaqqi Al-Quran' : 'Kelas ABAHATA';
+            
+            let csv = `Nama Pelajar,${student.nama}\n`;
+            csv += `No. IC,${student.ic || '-'}\n`;
+            csv += `Kelas,${className}\n`;
+            csv += `Skor Keseluruhan,${student.overallAvg.toFixed(2)}%\n\n`;
+            
+            csv += `Aspek Penilaian,Markah Diperolehi,Markah Penuh,Peratusan (%)\n`;
+            
+            globalData.headers.forEach(header => {
+                const mark = student.marks[header];
+                const base = globalData.baseMarks[header];
+                const pct = student.percentages[header];
+                csv += `"${header}",${mark},${base},${pct.toFixed(2)}%\n`;
+            });
+            
+            return csv;
+        }
+
+        function downloadPortalExcel(btn) {
+            const csv = generateSingleStudentCSV(currentLoggedInStudent, currentLoggedInClass);
+            downloadCSV(csv, `Profil_${currentLoggedInStudent.nama.replace(/\s+/g, '_')}.csv`);
+        }
+
+        function downloadAdminStudentExcel(btn) {
+            const csv = generateSingleStudentCSV(currentEditingStudent, currentClassId);
+            downloadCSV(csv, `Laporan_${currentEditingStudent.nama.replace(/\s+/g, '_')}.csv`);
+        }
+
+        function downloadAllStudentsExcel(btn) {
+            let csv = `Senarai Laporan Prestasi - ${CLASSES[currentClassId].name}\n\n`;
+            
+            // Header Jadual
+            csv += `Bil,Nama Pelajar,No. IC,Skor Purata Keseluruhan (%)`;
+            globalData.headers.forEach(header => {
+                csv += `,"${header} (Markah)"`;
+            });
+            csv += `\n`;
+
+            // Susun pelajar sama seperti di paparan UI sekarang
+            const sortedStudents = [...globalData.students].sort((a, b) => {
+                return currentSortOrder === 'desc' ? b.overallAvg - a.overallAvg : a.overallAvg - b.overallAvg;
+            });
+
+            // Isi Data Pelajar
+            sortedStudents.forEach((student, index) => {
+                csv += `${index + 1},"${student.nama}","${student.ic || '-'}",${student.overallAvg.toFixed(2)}%`;
+                
+                globalData.headers.forEach(header => {
+                    csv += `,${student.marks[header]}`;
+                });
+                csv += `\n`;
+            });
+
+            downloadCSV(csv, `Rekod_Kelas_${CLASSES[currentClassId].name.replace(/\s+/g, '_')}.csv`);
+        }
+
+        // ==========================================
+        // FUNGSI MUAT TURUN GAMBAR (HTML2CANVAS)
+        // ==========================================
+        
+        async function downloadDashboardImage(btn) {
+            const element = document.getElementById('tab-dashboard');
+            const scrollArea = document.getElementById('main-scroll-area');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i> Menyediakan Gambar...';
+            btn.disabled = true;
+
+            const noPrintEls = element.querySelectorAll('.no-print');
+            noPrintEls.forEach(el => el.style.display = 'none');
+            
+            // Simpan kedudukan skrol asal & paksa skrol ke atas
+            const origScrollTop = scrollArea.scrollTop;
+            scrollArea.scrollTop = 0;
+            window.scrollTo(0, 0);
+
+            const origWidth = element.style.width;
+            const origOverflow = element.style.overflow;
+            const origPosition = element.style.position;
+            const origLeft = element.style.left;
+            const origTop = element.style.top;
+            const origZIndex = element.style.zIndex;
+            const origBg = element.style.backgroundColor;
+
+            element.style.position = 'absolute';
+            element.style.left = '0px';
+            element.style.top = '0px';
+            element.style.width = '1440px';
+            element.style.overflow = 'visible';
+            element.style.zIndex = '9999';
+            element.style.backgroundColor = '#f9fafb';
+            
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            try {
+                const canvas = await html2canvas(element, { scale: 2, useCORS: true, windowWidth: 1440, scrollY: 0, scrollX: 0 });
+                const link = document.createElement('a');
+                link.download = `Laporan_Kelas_${CLASSES[currentClassId].name.replace(/\s+/g, '_')}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 1.0);
+                link.click();
+            } catch (e) {
+                console.error(e);
+                alert('Gagal memuat turun gambar. Ralat sistem.');
+            }
+
+            element.style.position = origPosition;
+            element.style.left = origLeft;
+            element.style.top = origTop;
+            element.style.width = origWidth;
+            element.style.overflow = origOverflow;
+            element.style.zIndex = origZIndex;
+            element.style.backgroundColor = origBg;
+            
+            scrollArea.scrollTop = origScrollTop;
+
+            noPrintEls.forEach(el => el.style.display = '');
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+            lucide.createIcons();
+        }
+
+        async function downloadAdminStudentImage(btn) {
+            const modalContainer = document.getElementById('admin-modal-content');
+            const scrollArea = document.getElementById('admin-modal-scroll-area');
+            
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 md:mr-1.5 animate-spin"></i> <span class="hidden md:inline">Sedia...</span>';
+            btn.disabled = true;
+
+            const noPrintEls = modalContainer.querySelectorAll('.no-print');
+            noPrintEls.forEach(el => el.style.display = 'none');
+
+            const scrollableLists = modalContainer.querySelectorAll('ul.overflow-y-auto');
+            scrollableLists.forEach(ul => {
+                ul.dataset.origMaxHeight = ul.style.maxHeight || '';
+                ul.dataset.origOverflow = ul.style.overflow || '';
+                ul.style.maxHeight = 'none';
+                ul.style.overflow = 'visible';
+            });
+            
+            const tableContainers = modalContainer.querySelectorAll('.overflow-x-auto');
+            tableContainers.forEach(container => {
+                container.dataset.origOverflowX = container.style.overflowX || '';
+                container.style.overflowX = 'visible';
+            });
+
+            // Simpan kedudukan skrol asal & paksa skrol ke atas
+            const origScrollTop = scrollArea.scrollTop;
+            scrollArea.scrollTop = 0;
+            window.scrollTo(0, 0);
+
+            const origClasses = modalContainer.className;
+            const origMaxHeight = modalContainer.style.maxHeight;
+            const origOverflow = scrollArea.style.overflow;
+            const origWidth = modalContainer.style.width;
+            
+            modalContainer.classList.remove('overflow-hidden', 'max-w-4xl');
+            modalContainer.style.maxHeight = 'none';
+            scrollArea.style.overflow = 'visible';
+            modalContainer.style.width = '1024px';
+
+            const origTransform = modalContainer.style.transform;
+            const origPosition = modalContainer.style.position;
+            const origLeft = modalContainer.style.left;
+            const origTop = modalContainer.style.top;
+            const origZIndex = modalContainer.style.zIndex;
+
+            modalContainer.style.transform = 'none'; 
+            modalContainer.style.position = 'absolute'; 
+            modalContainer.style.left = '0px'; 
+            modalContainer.style.top = '0px'; 
+            modalContainer.style.zIndex = '9999';
+            
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            try {
+                const canvas = await html2canvas(modalContainer, { scale: 2, useCORS: true, windowWidth: 1024, scrollY: 0, scrollX: 0 });
+                const link = document.createElement('a');
+                link.download = `Laporan_${currentEditingStudent.nama.replace(/\s+/g, '_')}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 1.0);
+                link.click();
+            } catch (e) {
+                console.error(e);
+                alert('Gagal memuat turun gambar.');
+            }
+
+            modalContainer.className = origClasses;
+            modalContainer.style.maxHeight = origMaxHeight;
+            scrollArea.style.overflow = origOverflow;
+            modalContainer.style.width = origWidth;
+            
+            modalContainer.style.transform = origTransform;
+            modalContainer.style.position = origPosition;
+            modalContainer.style.left = origLeft;
+            modalContainer.style.top = origTop;
+            modalContainer.style.zIndex = origZIndex;
+            
+            scrollArea.scrollTop = origScrollTop;
+            
+            scrollableLists.forEach(ul => {
+                ul.style.maxHeight = ul.dataset.origMaxHeight;
+                ul.style.overflow = ul.dataset.origOverflow;
+            });
+            tableContainers.forEach(container => {
+                container.style.overflowX = container.dataset.origOverflowX;
+            });
+            
+            noPrintEls.forEach(el => el.style.display = '');
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+            lucide.createIcons();
+        }
+
+        async function downloadPortalImage(btn) {
+            const element = document.getElementById('tab-student-portal');
+            const scrollArea = document.getElementById('main-scroll-area');
+            
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 md:mr-2 animate-spin"></i> <span class="hidden md:inline">Sedia...</span>';
+            btn.disabled = true;
+
+            const noPrintEls = element.querySelectorAll('.no-print');
+            noPrintEls.forEach(el => el.style.display = 'none');
+            
+            const scrollableLists = element.querySelectorAll('ul.overflow-y-auto');
+            scrollableLists.forEach(ul => {
+                ul.dataset.origMaxHeight = ul.style.maxHeight || '';
+                ul.dataset.origOverflow = ul.style.overflow || '';
+                ul.style.maxHeight = 'none';
+                ul.style.overflow = 'visible';
+            });
+            
+            const tableContainers = element.querySelectorAll('.overflow-x-auto');
+            tableContainers.forEach(container => {
+                container.dataset.origOverflowX = container.style.overflowX || '';
+                container.style.overflowX = 'visible';
+            });
+
+            // Simpan kedudukan skrol asal & paksa skrol ke atas
+            const origScrollTop = scrollArea.scrollTop;
+            scrollArea.scrollTop = 0;
+            window.scrollTo(0, 0);
+
+            const origClasses = element.className;
+            const origWidth = element.style.width;
+            const origOverflow = element.style.overflow;
+            element.classList.remove('mx-auto', 'max-w-5xl', 'overflow-hidden');
+            element.style.width = '1024px'; 
+            element.style.overflow = 'visible';
+            
+            const origPosition = element.style.position;
+            const origLeft = element.style.left;
+            const origTop = element.style.top;
+            const origZIndex = element.style.zIndex;
+
+            element.style.position = 'absolute';
+            element.style.left = '0px';
+            element.style.top = '0px';
+            element.style.zIndex = '9999';
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            try {
+                const canvas = await html2canvas(element, { scale: 2, useCORS: true, windowWidth: 1024, scrollY: 0, scrollX: 0 });
+                const link = document.createElement('a');
+                link.download = `Profil_Prestasi_${currentLoggedInStudent.nama.replace(/\s+/g, '_')}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 1.0);
+                link.click();
+            } catch (e) {
+                console.error(e);
+                alert('Gagal memuat turun gambar.');
+            }
+
+            element.className = origClasses;
+            element.style.width = origWidth;
+            element.style.overflow = origOverflow;
+            element.style.position = origPosition;
+            element.style.left = origLeft;
+            element.style.top = origTop;
+            element.style.zIndex = origZIndex;
+            
+            scrollArea.scrollTop = origScrollTop;
+            
+            scrollableLists.forEach(ul => {
+                ul.style.maxHeight = ul.dataset.origMaxHeight;
+                ul.style.overflow = ul.dataset.origOverflow;
+            });
+            tableContainers.forEach(container => {
+                container.style.overflowX = container.dataset.origOverflowX;
+            });
+            
+            noPrintEls.forEach(el => el.style.display = '');
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+            lucide.createIcons();
+        }
+
+    </script>
+</body>
+</html>
