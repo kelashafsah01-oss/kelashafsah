@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kelas Mengaji Hafsah - Portal</title>
     
-    <!-- PWA / Home Screen App Icons & Meta Tags -->
     <link rel="icon" type="image/png" href="https://i.postimg.cc/TwZN5fP1/image.png">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/TwZN5fP1/image.png">
     <meta name="apple-mobile-web-app-title" content="KM Hafsah">
@@ -14,7 +13,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#052e16">
     
-    <!-- Dynamic Manifest Generator for PWA -->
     <script>
         const manifestJSON = {
             "name": "Kelas Mengaji Hafsah",
@@ -42,23 +40,17 @@
         document.write('<link rel="manifest" href="' + manifestURL + '">');
     </script>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- PapaParse for CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     
-    <!-- HTML2PDF & HTML2Canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 
     <script>
@@ -135,11 +127,14 @@
             color: #fff !important;
             border-top-color: #eab308 !important; 
         }
+
+        /* Pengurusan Page Break PDF */
+        .pdf-page-break { page-break-before: always !important; }
+        .pdf-page-break-tajwid { page-break-before: always !important; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased h-screen w-screen overflow-hidden">
 
-    <!-- Login Screen -->
     <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center islamic-pattern-bg p-4 transition-opacity duration-300 overflow-y-auto">
         <div class="bg-white p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md relative overflow-hidden my-auto">
             
@@ -206,10 +201,8 @@
         </div>
     </div>
 
-    <!-- Main App Wrapper -->
     <div id="app-wrapper" class="hidden h-full w-full flex">
         
-        <!-- Sidebar (Admin Desktop) -->
         <aside id="admin-sidebar" class="hidden islamic-pattern-bg text-white shadow-xl z-20 shrink-0 relative transition-[width] duration-300">
             <button onclick="toggleSidebar()" class="hidden md:flex absolute -right-3.5 top-8 bg-gold-500 hover:bg-gold-600 text-white rounded-full p-1 shadow-lg border-2 border-white z-50 transition-transform">
                 <i data-lucide="chevron-right" id="sidebar-toggle-icon" class="w-4 h-4"></i>
@@ -247,7 +240,6 @@
             </div>
         </aside>
 
-        <!-- Kawasan Kandungan Utama -->
         <main class="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 relative">
             
             <header id="admin-mobile-header" class="hidden islamic-pattern-bg text-white p-3.5 justify-between items-center shadow-md z-20 shrink-0">
@@ -289,7 +281,6 @@
                     <button onclick="fetchData(true)" class="px-6 py-2.5 bg-quran-700 text-white rounded-lg shadow hover:bg-quran-800 transition font-medium">Cuba Semula</button>
                 </div>
 
-                <!-- TAB DASHBOARD ADMIN -->
                 <div id="tab-dashboard" class="hidden space-y-6 p-4 md:p-8 pt-4">
                     <div class="flex flex-col md:flex-row justify-between md:items-end gap-4 mb-6">
                         <div>
@@ -297,7 +288,6 @@
                             <p class="text-sm text-gray-500 mt-1">Prestasi purata kelas berdasarkan pecahan tajwid dan kefasihan.</p>
                         </div>
                         <div class="flex flex-wrap gap-2 no-print w-full md:w-auto">
-                            <!-- Butang Muat Turun -->
                             <button onclick="downloadDashboardPDF(this)" class="flex-1 md:flex-none flex items-center justify-center text-sm bg-blue-600 border border-blue-600 shadow-sm px-4 py-2.5 rounded-lg text-white hover:bg-blue-700 transition font-medium">
                                 <i data-lucide="file-text" class="w-4 h-4 mr-2"></i> PDF
                             </button>
@@ -384,7 +374,6 @@
                     </div>
                 </div>
 
-                <!-- TAB STUDENT LIST ADMIN -->
                 <div id="tab-students" class="hidden space-y-6 p-4 md:p-8 pt-4">
                     <div class="flex flex-col md:flex-row justify-between md:items-end gap-4 mb-6">
                         <div>
@@ -396,7 +385,6 @@
                                 <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
                                 <input type="text" id="search-input" onkeyup="filterStudents()" placeholder="Cari nama atau IC..." class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-quran-500 focus:border-transparent text-sm">
                             </div>
-                            <!-- Butang Muat Turun Kelas Excel Baru -->
                             <button onclick="downloadAllStudentsExcel(this)" class="w-full md:w-auto px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition flex items-center justify-center whitespace-nowrap shadow-sm">
                                 <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-2"></i> Eksport Excel
                             </button>
@@ -463,17 +451,14 @@
                     </div>
                 </div>
 
-                <!-- TAB STUDENT PORTAL -->
                 <div id="tab-student-portal" class="hidden w-full max-w-5xl mx-auto md:py-6 space-y-6 pb-12 relative">
                     <div class="bg-white rounded-none md:rounded-2xl shadow-sm border-b md:border border-gray-100 overflow-hidden relative">
                         <div class="h-28 md:h-40 islamic-pattern-bg"></div>
                         
                         <div class="absolute top-4 right-4 flex gap-2 z-10 no-print flex-wrap justify-end">
-                            <!-- Butang Excel Baru -->
                             <button onclick="downloadPortalExcel(this)" class="bg-green-600/90 hover:bg-green-600 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center transition border border-green-500/50 shadow-sm">
                                 <i data-lucide="file-spreadsheet" class="w-4 h-4 md:mr-2"></i> <span class="hidden md:inline">Excel</span>
                             </button>
-                            <!-- Butang Muat Turun -->
                             <button onclick="downloadPortalPDF(this)" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center transition border border-white/30 shadow-sm">
                                 <i data-lucide="file-text" class="w-4 h-4 md:mr-2"></i> <span class="hidden md:inline">PDF</span>
                             </button>
@@ -619,7 +604,6 @@
         </main>
     </div>
 
-    <!-- MODAL ADMIN STUDENT -->
     <div id="student-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
         <div id="admin-modal-content" class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col transform transition-all relative">
             
@@ -634,15 +618,12 @@
                     </div>
                 </div>
                 <div class="flex space-x-2 items-center self-start no-print flex-wrap justify-end">
-                    <!-- Butang Excel Baru -->
                     <button onclick="downloadAdminStudentExcel(this)" class="text-white hover:text-gold-300 transition bg-white/10 px-3 py-1.5 rounded-lg flex items-center text-xs md:text-sm font-medium">
                         <i data-lucide="file-spreadsheet" class="w-3 h-3 md:w-4 md:h-4 md:mr-1.5"></i> <span class="hidden md:inline">Excel</span>
                     </button>
-                    <!-- Butang PDF -->
                     <button onclick="downloadAdminStudentPDF(this)" id="btn-dl-admin-student" class="text-white hover:text-gold-300 transition bg-white/10 px-3 py-1.5 rounded-lg flex items-center text-xs md:text-sm font-medium">
                         <i data-lucide="file-text" class="w-3 h-3 md:w-4 md:h-4 md:mr-1.5"></i> <span class="hidden md:inline">PDF</span>
                     </button>
-                    <!-- Butang Gambar -->
                     <button onclick="downloadAdminStudentImage(this)" class="text-white hover:text-gold-300 transition bg-white/10 px-3 py-1.5 rounded-lg flex items-center text-xs md:text-sm font-medium">
                         <i data-lucide="image-down" class="w-3 h-3 md:w-4 md:h-4 md:mr-1.5"></i> <span class="hidden md:inline">Gambar</span>
                     </button>
@@ -666,7 +647,6 @@
                             <div class="relative h-[300px] md:h-[350px] w-full flex justify-center">
                                 <canvas id="radarChart"></canvas>
                             </div>
-                            <!-- Legend Rujukan Carta Admin Modal -->
                             <div id="admin-radar-legend" class="mt-4 flex flex-wrap justify-center gap-4 text-[11px] font-medium text-gray-600"></div>
                         </div>
 
@@ -771,7 +751,6 @@
         </div>
     </div>
 
-    <!-- Modal Tambah Pelajar -->
     <div id="add-student-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col transform transition-all">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center islamic-pattern-bg text-white">
@@ -825,7 +804,6 @@
         </div>
     </div>
 
-    <!-- Modal Padam Pelajar -->
     <div id="delete-confirm-modal" class="fixed inset-0 z-[80] hidden items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col transform transition-all p-6 text-center">
             <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -843,7 +821,7 @@
     </div>
 
     <script>
-        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxun1GItiBewt74_Fttbu_07xQWh-R-s3kTq-PZKpTENsa6eTj15u5chZHETK7R-3mY/exec'; 
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwRK29yrhmFghp1KK5xSQZe6wUJln0ar0NzBbWxhVFTBsAEOX6Sdrc2m63-T-Sxk3_tCQ/exec'; 
         const SPREADSHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRB_boVBQ3VpPa-bvh58wzF90OiBvteku9E8Nuv8l4-4hA15FwxwLF7Q84VNRokLKx2l72schmc0g2S/pub';
         const CLASSES = {
             talaqqi: { id: 'talaqqi', name: 'Talaqqi Al-Quran', url: SPREADSHEET_BASE + '?output=csv' },
@@ -1826,6 +1804,7 @@
                 tabName: currentClassId === 'talaqqi' ? 'TALAQQI AL QURAN' : 'KELAS ABAHATA',
                 rowIndex: student.rowIndex,
                 name: document.getElementById('edit-name').value.trim(),
+                ic: student.ic, // Sync gambar ke tab lain
                 marks: updatedMarks,
                 image: null, mimeType: null
             };
@@ -2113,6 +2092,7 @@
                     tabName: currentLoggedInClass === 'talaqqi' ? 'TALAQQI AL QURAN' : 'KELAS ABAHATA',
                     rowIndex: currentLoggedInStudent.rowIndex,
                     name: currentLoggedInStudent.nama, 
+                    ic: currentLoggedInStudent.ic, // Sync gambar ke tab lain
                     marks: {}, 
                     mimeType: file.type,
                     image: base64Data
@@ -2239,11 +2219,13 @@
             const searchIC = icInput.replace(/\D/g, '');
             const classIdRaw = document.getElementById('add-student-class').value;
             const classId = classIdRaw === 'TALAQQI AL QURAN' ? 'talaqqi' : 'abahata';
+            const otherClassId = classId === 'talaqqi' ? 'abahata' : 'talaqqi';
             
             const msgEl = document.getElementById('ic-check-msg');
             const step2 = document.getElementById('add-student-step-2');
             const footer = document.getElementById('add-student-footer');
             const btnCheck = document.getElementById('btn-check-ic');
+            const nameInput = document.getElementById('add-student-name');
 
             if (searchIC.length < 6) {
                 msgEl.textContent = "Sila masukkan no IC sekurang-kurangnya 6 digit.";
@@ -2257,23 +2239,42 @@
             btnCheck.disabled = true;
 
             try {
+                // Pastikan cache untuk kedua-dua kelas tersedia untuk buat cross-checking
                 if (!classCache[classId]) {
                     classCache[classId] = await fetchAndParseCSV(CLASSES[classId].url, classId);
                 }
+                if (!classCache[otherClassId]) {
+                    classCache[otherClassId] = await fetchAndParseCSV(CLASSES[otherClassId].url, otherClassId);
+                }
 
-                const existingStudent = classCache[classId].students.find(s => s.ic && s.ic.replace(/\D/g, '') === searchIC);
+                // Cari pelajar di kelas semasa
+                const existingStudentInCurrent = classCache[classId].students.find(s => s.ic && s.ic.replace(/\D/g, '') === searchIC);
+                
+                // Cari pelajar di kelas lain
+                const studentInOtherClass = classCache[otherClassId].students.find(s => s.ic && s.ic.replace(/\D/g, '') === searchIC);
 
-                if (existingStudent) {
+                if (existingStudentInCurrent) {
+                    // Kesalahan: Sudah wujud dalam kelas ini
                     msgEl.innerHTML = `<i data-lucide="x-circle" class="w-4 h-4 inline mr-1 mb-0.5"></i> Pelajar telah berdaftar dalam kelas ini.`;
                     msgEl.className = "text-xs font-semibold text-red-700 bg-red-50 p-2.5 rounded-lg border border-red-200 block mt-3 flex items-center";
                     step2.classList.add('hidden');
                     footer.classList.add('hidden');
+                } else if (studentInOtherClass) {
+                    // Berjaya: Jumpa di kelas lain, boleh didaftarkan di kelas ini. Auto isi nama.
+                    msgEl.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 inline mr-1 mb-0.5"></i> Pelajar dikesan dari kelas ${CLASSES[otherClassId].name}. Nama diisi automatik.`;
+                    msgEl.className = "text-xs font-semibold text-emerald-700 bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 block mt-3 flex items-center";
+                    step2.classList.remove('hidden');
+                    footer.classList.remove('hidden');
+                    
+                    nameInput.value = studentInOtherClass.nama; // <-- Fungsi Auto Fill
                 } else {
+                    // Berjaya: Pelajar baru sepenuhnya
                     msgEl.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 inline mr-1 mb-0.5"></i> IC Sah. Sila lengkapkan butiran.`;
                     msgEl.className = "text-xs font-semibold text-emerald-700 bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 block mt-3 flex items-center";
                     step2.classList.remove('hidden');
                     footer.classList.remove('hidden');
-                    setTimeout(() => document.getElementById('add-student-name').focus(), 100);
+                    nameInput.value = ''; // Kosongkan nama
+                    setTimeout(() => nameInput.focus(), 100);
                 }
                 msgEl.classList.remove('hidden');
                 lucide.createIcons();
@@ -2358,13 +2359,10 @@
             const noPrintEls = element.querySelectorAll('.no-print');
             noPrintEls.forEach(el => el.style.display = 'none');
             
-            // Simpan kedudukan skrol asal & paksa skrol ke atas
             const origScrollTop = scrollArea.scrollTop;
             scrollArea.scrollTop = 0;
             window.scrollTo(0, 0);
 
-            // [Trik Fit Kertas]: Besarkan width supaya konten memanjang, 
-            // bila html2pdf kecilkan ke A4, ia tidak akan overflow ke page 2
             const origWidth = element.style.width;
             const origPosition = element.style.position;
             const origLeft = element.style.left;
@@ -2376,8 +2374,7 @@
             element.style.top = '0px';
             element.style.width = '1440px'; 
             element.style.zIndex = '9999';
-            
-            // Tunggu render & animasi selesai
+
             await new Promise(resolve => setTimeout(resolve, 1000));
 
             const contentHeight = element.scrollHeight;
@@ -2403,7 +2400,7 @@
             element.style.top = origTop;
             element.style.width = origWidth;
             element.style.zIndex = origZIndex;
-            scrollArea.scrollTop = origScrollTop; // Kembalikan posisi skrol
+            scrollArea.scrollTop = origScrollTop; 
 
             noPrintEls.forEach(el => el.style.display = '');
             btn.innerHTML = originalHtml;
@@ -2412,18 +2409,22 @@
         }
 
         async function downloadAdminStudentPDF(btn) {
-            const modalContainer = document.getElementById('admin-modal-content');
-            const scrollArea = document.getElementById('admin-modal-scroll-area');
-            const tableContainer = document.getElementById('admin-table-container');
+            const element = document.getElementById('tab-student-portal');
+            const tableContainer = document.getElementById('portal-table-container');
+            const scrollArea = document.getElementById('main-scroll-area');
             
             const originalHtml = btn.innerHTML;
             btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 md:mr-1.5 animate-spin"></i> <span class="hidden md:inline">Sedia...</span>';
             btn.disabled = true;
 
-            const noPrintEls = modalContainer.querySelectorAll('.no-print');
+            const tempClassId = currentLoggedInClass;
+            currentLoggedInClass = currentClassId;
+            renderStudentPortal(currentEditingStudent);
+
+            const noPrintEls = element.querySelectorAll('.no-print');
             noPrintEls.forEach(el => el.style.display = 'none');
 
-            const scrollableLists = modalContainer.querySelectorAll('ul.overflow-y-auto');
+            const scrollableLists = element.querySelectorAll('ul.overflow-y-auto');
             scrollableLists.forEach(ul => {
                 ul.dataset.origMaxHeight = ul.style.maxHeight || '';
                 ul.dataset.origOverflow = ul.style.overflow || '';
@@ -2431,45 +2432,39 @@
                 ul.style.overflow = 'visible';
             });
             
-            const tableContainers = modalContainer.querySelectorAll('.overflow-x-auto');
+            const tableContainers = element.querySelectorAll('.overflow-x-auto');
             tableContainers.forEach(container => {
                 container.dataset.origOverflowX = container.style.overflowX || '';
                 container.style.overflowX = 'visible';
             });
 
-            // Simpan kedudukan skrol asal & paksa skrol ke atas
             const origScrollTop = scrollArea.scrollTop;
             scrollArea.scrollTop = 0;
             window.scrollTo(0, 0);
 
-            const origClasses = modalContainer.className;
-            const origMaxHeight = modalContainer.style.maxHeight;
-            const origOverflow = scrollArea.style.overflow;
-            const origWidth = modalContainer.style.width;
+            const origClasses = element.className;
+            const origWidth = element.style.width;
+            const origPosition = element.style.position;
+            const origLeft = element.style.left;
+            const origTop = element.style.top;
+            const origZIndex = element.style.zIndex;
+            const origBg = element.style.backgroundColor;
+            const origDisplay = element.style.display;
             
-            modalContainer.classList.remove('overflow-hidden', 'max-w-4xl');
-            modalContainer.style.maxHeight = 'none';
-            scrollArea.style.overflow = 'visible';
-            modalContainer.style.width = '1024px'; 
-            
-            const origTransform = modalContainer.style.transform;
-            const origPosition = modalContainer.style.position;
-            const origLeft = modalContainer.style.left;
-            const origTop = modalContainer.style.top;
-            const origZIndex = modalContainer.style.zIndex;
-
-            modalContainer.style.transform = 'none'; 
-            modalContainer.style.position = 'absolute'; 
-            modalContainer.style.left = '0px'; 
-            modalContainer.style.top = '0px'; 
-            modalContainer.style.zIndex = '9999';
+            element.className = 'w-full pb-12 relative'; 
+            element.style.display = 'block';
+            element.style.position = 'absolute';
+            element.style.left = '0px'; 
+            element.style.top = '0px'; 
+            element.style.width = '1024px'; 
+            element.style.zIndex = '-50'; 
+            element.style.backgroundColor = '#f9fafb';
             
             if(tableContainer) tableContainer.classList.add('pdf-page-break'); 
 
-            // Tunggu render
-            await new Promise(resolve => setTimeout(resolve, 800));
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
-            const contentHeight = modalContainer.scrollHeight;
+            const contentHeight = element.scrollHeight;
 
             const opt = {
                 margin: 0, 
@@ -2480,7 +2475,7 @@
             };
 
             try {
-                const canvas = await html2canvas(modalContainer, { scale: 2, useCORS: true, windowWidth: 1024, scrollY: 0, scrollX: 0 });
+                const canvas = await html2canvas(element, { scale: 2, useCORS: true, windowWidth: 1024, scrollY: 0, scrollX: 0 });
                 await html2pdf().set(opt).from(canvas).save();
             } catch (e) {
                 console.error(e);
@@ -2489,17 +2484,15 @@
 
             if(tableContainer) tableContainer.classList.remove('pdf-page-break');
             
-            modalContainer.className = origClasses;
-            modalContainer.style.maxHeight = origMaxHeight;
-            scrollArea.style.overflow = origOverflow;
-            modalContainer.style.width = origWidth;
+            element.className = origClasses;
+            element.style.display = origDisplay;
+            element.style.width = origWidth;
+            element.style.position = origPosition;
+            element.style.left = origLeft;
+            element.style.top = origTop;
+            element.style.zIndex = origZIndex;
+            element.style.backgroundColor = origBg;
             
-            modalContainer.style.transform = origTransform;
-            modalContainer.style.position = origPosition;
-            modalContainer.style.left = origLeft;
-            modalContainer.style.top = origTop;
-            modalContainer.style.zIndex = origZIndex;
-
             scrollArea.scrollTop = origScrollTop;
             
             scrollableLists.forEach(ul => {
@@ -2511,6 +2504,7 @@
             });
             
             noPrintEls.forEach(el => el.style.display = '');
+            currentLoggedInClass = tempClassId;
             btn.innerHTML = originalHtml;
             btn.disabled = false;
             lucide.createIcons();
@@ -2518,8 +2512,8 @@
 
         async function downloadPortalPDF(btn) {
             const element = document.getElementById('tab-student-portal');
-            const scrollArea = document.getElementById('main-scroll-area');
             const tableContainer = document.getElementById('portal-table-container');
+            const scrollArea = document.getElementById('main-scroll-area');
             
             const originalHtml = btn.innerHTML;
             btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 md:mr-2 animate-spin"></i> <span class="hidden md:inline">Sedia...</span>';
@@ -2542,7 +2536,6 @@
                 container.style.overflowX = 'visible';
             });
 
-            // Simpan kedudukan skrol asal & paksa skrol ke atas
             const origScrollTop = scrollArea.scrollTop;
             scrollArea.scrollTop = 0;
             window.scrollTo(0, 0);
@@ -2597,7 +2590,7 @@
             element.style.top = origTop;
             element.style.zIndex = origZIndex;
             
-            scrollArea.scrollTop = origScrollTop; // Kembalikan posisi skrol
+            scrollArea.scrollTop = origScrollTop; 
 
             scrollableLists.forEach(ul => {
                 ul.style.maxHeight = ul.dataset.origMaxHeight;
@@ -2614,83 +2607,6 @@
         }
 
         // ==========================================
-        // FUNGSI MUAT TURUN EXCEL (CSV)
-        // ==========================================
-
-        function downloadCSV(csvContent, filename) {
-            // Tambah BOM supaya Excel baca UTF-8 (elak ralat font Arabic/Special Chars)
-            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' }); 
-            const link = document.createElement("a");
-            if (link.download !== undefined) {
-                const url = URL.createObjectURL(blob);
-                link.setAttribute("href", url);
-                link.setAttribute("download", filename);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }
-
-        function generateSingleStudentCSV(student, classId) {
-            let className = classId === 'talaqqi' ? 'Talaqqi Al-Quran' : 'Kelas ABAHATA';
-            
-            let csv = `Nama Pelajar,${student.nama}\n`;
-            csv += `No. IC,${student.ic || '-'}\n`;
-            csv += `Kelas,${className}\n`;
-            csv += `Skor Keseluruhan,${student.overallAvg.toFixed(2)}%\n\n`;
-            
-            csv += `Aspek Penilaian,Markah Diperolehi,Markah Penuh,Peratusan (%)\n`;
-            
-            globalData.headers.forEach(header => {
-                const mark = student.marks[header];
-                const base = globalData.baseMarks[header];
-                const pct = student.percentages[header];
-                csv += `"${header}",${mark},${base},${pct.toFixed(2)}%\n`;
-            });
-            
-            return csv;
-        }
-
-        function downloadPortalExcel(btn) {
-            const csv = generateSingleStudentCSV(currentLoggedInStudent, currentLoggedInClass);
-            downloadCSV(csv, `Profil_${currentLoggedInStudent.nama.replace(/\s+/g, '_')}.csv`);
-        }
-
-        function downloadAdminStudentExcel(btn) {
-            const csv = generateSingleStudentCSV(currentEditingStudent, currentClassId);
-            downloadCSV(csv, `Laporan_${currentEditingStudent.nama.replace(/\s+/g, '_')}.csv`);
-        }
-
-        function downloadAllStudentsExcel(btn) {
-            let csv = `Senarai Laporan Prestasi - ${CLASSES[currentClassId].name}\n\n`;
-            
-            // Header Jadual
-            csv += `Bil,Nama Pelajar,No. IC,Skor Purata Keseluruhan (%)`;
-            globalData.headers.forEach(header => {
-                csv += `,"${header} (Markah)"`;
-            });
-            csv += `\n`;
-
-            // Susun pelajar sama seperti di paparan UI sekarang
-            const sortedStudents = [...globalData.students].sort((a, b) => {
-                return currentSortOrder === 'desc' ? b.overallAvg - a.overallAvg : a.overallAvg - b.overallAvg;
-            });
-
-            // Isi Data Pelajar
-            sortedStudents.forEach((student, index) => {
-                csv += `${index + 1},"${student.nama}","${student.ic || '-'}",${student.overallAvg.toFixed(2)}%`;
-                
-                globalData.headers.forEach(header => {
-                    csv += `,${student.marks[header]}`;
-                });
-                csv += `\n`;
-            });
-
-            downloadCSV(csv, `Rekod_Kelas_${CLASSES[currentClassId].name.replace(/\s+/g, '_')}.csv`);
-        }
-
-        // ==========================================
         // FUNGSI MUAT TURUN GAMBAR (HTML2CANVAS)
         // ==========================================
         
@@ -2704,7 +2620,6 @@
             const noPrintEls = element.querySelectorAll('.no-print');
             noPrintEls.forEach(el => el.style.display = 'none');
             
-            // Simpan kedudukan skrol asal & paksa skrol ke atas
             const origScrollTop = scrollArea.scrollTop;
             scrollArea.scrollTop = 0;
             window.scrollTo(0, 0);
@@ -2755,17 +2670,20 @@
         }
 
         async function downloadAdminStudentImage(btn) {
-            const modalContainer = document.getElementById('admin-modal-content');
-            const scrollArea = document.getElementById('admin-modal-scroll-area');
-            
+            const element = document.getElementById('tab-student-portal');
+            const scrollArea = document.getElementById('main-scroll-area');
             const originalHtml = btn.innerHTML;
             btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 md:mr-1.5 animate-spin"></i> <span class="hidden md:inline">Sedia...</span>';
             btn.disabled = true;
 
-            const noPrintEls = modalContainer.querySelectorAll('.no-print');
+            const tempClassId = currentLoggedInClass;
+            currentLoggedInClass = currentClassId; 
+            renderStudentPortal(currentEditingStudent);
+
+            const noPrintEls = element.querySelectorAll('.no-print');
             noPrintEls.forEach(el => el.style.display = 'none');
 
-            const scrollableLists = modalContainer.querySelectorAll('ul.overflow-y-auto');
+            const scrollableLists = element.querySelectorAll('ul.overflow-y-auto');
             scrollableLists.forEach(ul => {
                 ul.dataset.origMaxHeight = ul.style.maxHeight || '';
                 ul.dataset.origOverflow = ul.style.overflow || '';
@@ -2773,43 +2691,37 @@
                 ul.style.overflow = 'visible';
             });
             
-            const tableContainers = modalContainer.querySelectorAll('.overflow-x-auto');
+            const tableContainers = element.querySelectorAll('.overflow-x-auto');
             tableContainers.forEach(container => {
                 container.dataset.origOverflowX = container.style.overflowX || '';
                 container.style.overflowX = 'visible';
             });
 
-            // Simpan kedudukan skrol asal & paksa skrol ke atas
             const origScrollTop = scrollArea.scrollTop;
             scrollArea.scrollTop = 0;
             window.scrollTo(0, 0);
 
-            const origClasses = modalContainer.className;
-            const origMaxHeight = modalContainer.style.maxHeight;
-            const origOverflow = scrollArea.style.overflow;
-            const origWidth = modalContainer.style.width;
-            
-            modalContainer.classList.remove('overflow-hidden', 'max-w-4xl');
-            modalContainer.style.maxHeight = 'none';
-            scrollArea.style.overflow = 'visible';
-            modalContainer.style.width = '1024px';
+            const origClasses = element.className;
+            const origWidth = element.style.width;
+            const origPosition = element.style.position;
+            const origLeft = element.style.left;
+            const origTop = element.style.top;
+            const origZIndex = element.style.zIndex;
+            const origBg = element.style.backgroundColor;
 
-            const origTransform = modalContainer.style.transform;
-            const origPosition = modalContainer.style.position;
-            const origLeft = modalContainer.style.left;
-            const origTop = modalContainer.style.top;
-            const origZIndex = modalContainer.style.zIndex;
-
-            modalContainer.style.transform = 'none'; 
-            modalContainer.style.position = 'absolute'; 
-            modalContainer.style.left = '0px'; 
-            modalContainer.style.top = '0px'; 
-            modalContainer.style.zIndex = '9999';
+            element.className = 'w-full pb-12 relative'; 
+            element.style.display = 'block';
+            element.style.position = 'absolute';
+            element.style.left = '0px'; 
+            element.style.top = '0px'; 
+            element.style.width = '1024px'; 
+            element.style.zIndex = '-50'; 
+            element.style.backgroundColor = '#f9fafb';
             
             await new Promise(resolve => setTimeout(resolve, 1000));
 
             try {
-                const canvas = await html2canvas(modalContainer, { scale: 2, useCORS: true, windowWidth: 1024, scrollY: 0, scrollX: 0 });
+                const canvas = await html2canvas(element, { scale: 2, useCORS: true, windowWidth: 1024, scrollY: 0, scrollX: 0 });
                 const link = document.createElement('a');
                 link.download = `Laporan_${currentEditingStudent.nama.replace(/\s+/g, '_')}.jpg`;
                 link.href = canvas.toDataURL('image/jpeg', 1.0);
@@ -2819,19 +2731,17 @@
                 alert('Gagal memuat turun gambar.');
             }
 
-            modalContainer.className = origClasses;
-            modalContainer.style.maxHeight = origMaxHeight;
-            scrollArea.style.overflow = origOverflow;
-            modalContainer.style.width = origWidth;
-            
-            modalContainer.style.transform = origTransform;
-            modalContainer.style.position = origPosition;
-            modalContainer.style.left = origLeft;
-            modalContainer.style.top = origTop;
-            modalContainer.style.zIndex = origZIndex;
+            element.className = origClasses;
+            element.style.display = 'none';
+            element.style.width = origWidth;
+            element.style.position = origPosition;
+            element.style.left = origLeft;
+            element.style.top = origTop;
+            element.style.zIndex = origZIndex;
+            element.style.backgroundColor = origBg;
             
             scrollArea.scrollTop = origScrollTop;
-            
+
             scrollableLists.forEach(ul => {
                 ul.style.maxHeight = ul.dataset.origMaxHeight;
                 ul.style.overflow = ul.dataset.origOverflow;
@@ -2841,6 +2751,7 @@
             });
             
             noPrintEls.forEach(el => el.style.display = '');
+            currentLoggedInClass = tempClassId;
             btn.innerHTML = originalHtml;
             btn.disabled = false;
             lucide.createIcons();
@@ -2849,7 +2760,6 @@
         async function downloadPortalImage(btn) {
             const element = document.getElementById('tab-student-portal');
             const scrollArea = document.getElementById('main-scroll-area');
-            
             const originalHtml = btn.innerHTML;
             btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 md:mr-2 animate-spin"></i> <span class="hidden md:inline">Sedia...</span>';
             btn.disabled = true;
@@ -2871,7 +2781,6 @@
                 container.style.overflowX = 'visible';
             });
 
-            // Simpan kedudukan skrol asal & paksa skrol ke atas
             const origScrollTop = scrollArea.scrollTop;
             scrollArea.scrollTop = 0;
             window.scrollTo(0, 0);
@@ -2915,7 +2824,7 @@
             element.style.zIndex = origZIndex;
             
             scrollArea.scrollTop = origScrollTop;
-            
+
             scrollableLists.forEach(ul => {
                 ul.style.maxHeight = ul.dataset.origMaxHeight;
                 ul.style.overflow = ul.dataset.origOverflow;
@@ -2928,6 +2837,86 @@
             btn.innerHTML = originalHtml;
             btn.disabled = false;
             lucide.createIcons();
+        }
+
+        // ==========================================
+        // FUNGSI MUAT TURUN EXCEL (CSV)
+        // ==========================================
+        function getGradeText(pct) {
+            if (pct >= 90) return "Cemerlang";
+            if (pct >= 70) return "Baik";
+            if (pct >= 41) return "Sederhana";
+            return "Lemah";
+        }
+
+        function downloadCSV(csvContent, filename) {
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' }); 
+            const link = document.createElement("a");
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        function generateSingleStudentCSV(student, classId) {
+            let className = classId === 'talaqqi' ? 'Talaqqi Al-Quran' : 'Kelas ABAHATA';
+            
+            let csv = `Nama Pelajar,${student.nama}\n`;
+            csv += `No. IC,${student.ic || '-'}\n`;
+            csv += `Kelas,${className}\n`;
+            csv += `Skor Keseluruhan,${student.overallAvg.toFixed(2)}%\n`;
+            csv += `Pencapaian Keseluruhan,${getGradeText(student.overallAvg)}\n\n`;
+            
+            csv += `Aspek Penilaian,Markah Diperolehi,Markah Penuh,Peratusan (%),Pencapaian\n`;
+            
+            globalData.headers.forEach(header => {
+                const mark = student.marks[header];
+                const base = globalData.baseMarks[header];
+                const pct = student.percentages[header];
+                csv += `"${header}",${mark},${base},${pct.toFixed(2)}%,${getGradeText(pct)}\n`;
+            });
+            
+            return csv;
+        }
+
+        function downloadPortalExcel(btn) {
+            const csv = generateSingleStudentCSV(currentLoggedInStudent, currentLoggedInClass);
+            downloadCSV(csv, `Profil_${currentLoggedInStudent.nama.replace(/\s+/g, '_')}.csv`);
+        }
+
+        function downloadAdminStudentExcel(btn) {
+            const csv = generateSingleStudentCSV(currentEditingStudent, currentClassId);
+            downloadCSV(csv, `Laporan_${currentEditingStudent.nama.replace(/\s+/g, '_')}.csv`);
+        }
+
+        function downloadAllStudentsExcel(btn) {
+            let csv = `Senarai Laporan Prestasi - ${CLASSES[currentClassId].name}\n\n`;
+            
+            csv += `Bil,Nama Pelajar,No. IC,Skor Purata Keseluruhan (%),Pencapaian Keseluruhan`;
+            globalData.headers.forEach(header => {
+                csv += `,"${header} (%)"`;
+            });
+            csv += `\n`;
+
+            const sortedStudents = [...globalData.students].sort((a, b) => {
+                return currentSortOrder === 'desc' ? b.overallAvg - a.overallAvg : a.overallAvg - b.overallAvg;
+            });
+
+            sortedStudents.forEach((student, index) => {
+                csv += `${index + 1},"${student.nama}","${student.ic || '-'}",${student.overallAvg.toFixed(2)}%,${getGradeText(student.overallAvg)}`;
+                
+                globalData.headers.forEach(header => {
+                    csv += `,${student.percentages[header].toFixed(2)}%`;
+                });
+                csv += `\n`;
+            });
+
+            downloadCSV(csv, `Rekod_Kelas_${CLASSES[currentClassId].name.replace(/\s+/g, '_')}.csv`);
         }
 
     </script>
